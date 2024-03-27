@@ -50,26 +50,49 @@ const signup = async(req, res) => {
 
     } catch (error) {
         console.log("Error in Signup Controller: ", error.message);
-        res.status(500).json("Server Error: Internal error occurred during sign up!");
+        res.status(500).json({ error: "Server Error: Internal error occurred during sign up!"});
     }
 };
 
-const login = (req, res) => {
+const login = async (req, res) => {
     try{
         const { username, password } = req.body;
-        const userData = {
+        const query = {
             username: username,
         }
-        const user = User.findOne(userData);
+        const user = User.findOne(query);
 
-        const hashedPwd = user.password;
+        if(user) {
+            const correctPwd = await bcrypt.compare(password, user.password);
+            if(!correctPwd) {
+                return res.status(404).json({ error: `Invalid password! Please type again`});
+            }
 
-        
+            generateJWT(user._id, res);
+
+            return res.status(200).json({
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                username: user.username,
+                email: user.email,
+                profilePicture: user.profilePicture
+            });
+        } else{
+            return res.status(404).json({ error: `User with username- ${username} is not registered! Please Signup first to login`});
+        }
     } catch (error) {
-
+        console.log("Error in Login Controller: ", error.message);
+        return res.status(500).json({ error: "Server Error: Internal error occurred during login!"});
     }
 };
 
 const logout = (req, res) => {
-
+    try {
+        res.cookie("jwt", "", {maxAge: 0});
+        return res.status(200).json({message: "Logged out successfully!"});
+    } catch (error) {
+        console.log("Error in Logout Controller", error.message);
+        return res.status(500).json({error: "Server Error: Internal error occurred during logout!"})
+    }
 };
