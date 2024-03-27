@@ -96,3 +96,5 @@ const logout = (req, res) => {
         return res.status(500).json({error: "Server Error: Internal error occurred during logout!"})
     }
 };
+
+export {signup, login, logout};
