@@ -1,8 +1,8 @@
-import User from "../Models/User";
+import User from "../Models/User.js";
 import bcrypt from "bcryptjs";
-import generateJWT from "../Utils/generateJWT";
+import generateJWT from "../Utils/generateJWT.js";
 
-const signup = async(req, res) => {
+export const signup = async (req, res) => {
     try {
         const { firstName, lastName, username, email, password } = req.body;
         const query = {
@@ -11,7 +11,7 @@ const signup = async(req, res) => {
         };
 
         // Search in DB for user and email infos
-        const user = User.find({username: query.username}) || User.find({email: query.email});
+        const user = await User.find({username: query.username}) || User.find({email: query.email});
 
         if(user) {
             return res.status(400).json({error: `User with username- ${username} and email- ${email} already exists! Either Login or choose a different field`});
@@ -54,7 +54,7 @@ const signup = async(req, res) => {
     }
 };
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
     try{
         const { username, password } = req.body;
         const query = {
@@ -87,7 +87,7 @@ const login = async (req, res) => {
     }
 };
 
-const logout = (req, res) => {
+export const logout = async(req, res) => {
     try {
         res.cookie("jwt", "", {maxAge: 0});
         return res.status(200).json({message: "Logged out successfully!"});
@@ -96,5 +96,3 @@ const logout = (req, res) => {
         return res.status(500).json({error: "Server Error: Internal error occurred during logout!"})
     }
 };
-
-export {signup, login, logout};
