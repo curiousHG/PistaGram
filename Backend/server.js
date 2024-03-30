@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cookieParser);
 const PORT = process.env.PORT || 8000;
 
-// Route Handlers 
+// Route Handlers
 app.use("/api/auth", authenticationRouter);
 app.use("/api/users", userRouter);
 app.use("/api/messages", messagingRouter);
@@ -21,5 +21,5 @@ app.use("/api/messages", messagingRouter);
 // Start Server on default PORT
 app.listen(PORT, () => {
     connectMongoDB();
-    console.log(`Running on PORT -> ${PORT}`)
+    console.log(`Running on PORT -> ${PORT}`);
 });

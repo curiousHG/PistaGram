@@ -2,26 +2,26 @@ import mongoose, { Schema, model } from "mongoose";
 
 const schemaOptions = {
     timestamps: {
-        createdAt: 'created_at', 
-        updatedAt: 'updated_at'
-    }
+        createdAt: "created_at",
+        updatedAt: "updated_at",
+    },
 };
 
 const messageSchema = new mongoose.Schema({
     senderId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: true,
     },
     receiverId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: true,
     },
     message: {
         type: String,
-        required: true
-    }
+        required: true,
+    },
 });
 
 const Message = new model("Message", messageSchema, schemaOptions);
