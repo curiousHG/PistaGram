@@ -7,7 +7,7 @@ interface ReceiverInfoProps {
 
 const ReceiverInfo = ({ username, avatarUrl }: ReceiverInfoProps) => {
     return (
-        <div className="w-full flex flex-row gap-3 items-center border rounded-3xl">
+        <div className="w-full flex flex-row gap-3 bg-gray-800 items-center rounded-3xl">
             <div className="avatar p-5">
                 <div className="w-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                     <img src={avatarUrl} alt="user avatar" />

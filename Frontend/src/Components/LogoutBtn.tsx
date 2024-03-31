@@ -1,15 +1,10 @@
 const LogoutBtn = () => {
     return (
-        <div className="cursor-pointer">
-            <svg
-                width="1024px"
-                height="1024px"
-                viewBox="0 0 1024 1024"
-                xmlns="http://www.w3.org/2000/svg"
-                className="icon mt-auto w-10 h-10 px-1 hover:bg-gray-500 rounded-full"
-            >
-                <path d="M868 732h-70.3c-4.8 0-9.3 2.1-12.3 5.8-7 8.5-14.5 16.7-22.4 24.5a353.84 353.84 0 0 1-112.7 75.9A352.8 352.8 0 0 1 512.4 866c-47.9 0-94.3-9.4-137.9-27.8a353.84 353.84 0 0 1-112.7-75.9 353.28 353.28 0 0 1-76-112.5C167.3 606.2 158 559.9 158 512s9.4-94.2 27.8-137.8c17.8-42.1 43.4-80 76-112.5s70.5-58.1 112.7-75.9c43.6-18.4 90-27.8 137.9-27.8 47.9 0 94.3 9.3 137.9 27.8 42.2 17.8 80.1 43.4 112.7 75.9 7.9 7.9 15.3 16.1 22.4 24.5 3 3.7 7.6 5.8 12.3 5.8H868c6.3 0 10.2-7 6.7-12.3C798 160.5 663.8 81.6 511.3 82 271.7 82.6 79.6 277.1 82 516.4 84.4 751.9 276.2 942 512.4 942c152.1 0 285.7-78.8 362.3-197.7 3.4-5.3-.4-12.3-6.7-12.3zm88.9-226.3L815 393.7c-5.3-4.2-13-.4-13 6.3v76H488c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h314v76c0 6.7 7.8 10.5 13 6.3l141.9-112a8 8 0 0 0 0-12.6z" />
-            </svg>
+        <div className="cursor-pointer px-1">
+            <img
+                className="w-11 h-10 hover:bg-gray-500 hover:scale-110 rounded-full"
+                src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB9UlEQVR4nO2au04CQRSGPwyNWmm0oxA1Kl4Lo7Gh1sfQJzAaG6MxxFqk0Zew8/IiJt4o7DRBofFC1ELXTLIkhCwgMssMzPmSv+Qc5t/ds3PODgiCIAiCIAha6QUmgXlNUrF6aAOWgAvgE/A0S8U8BxaxlD3gJ4SFV0rl2MUytlqw8EptYAlx4MuAASrnCBaQMbD4ktJYwK1BA66xgGKNP1gA7ptUoUZ8lds4Xg2p+tAsw3VyGMeroZiG+CqGGIDDd0AU6AO6gHFgv6LudLwBQUyUvX2cNEAxAFziiAErwBrQH2BCxxuQLov3CCSwDC9EAyIBG62cPx+wBi/kOyAbEPcJmMIRA5JVttvKhGkcKYJJ4C0g/jMwSxsaMAYcAicN6K5KjjwwRxsZMAy81vldo8prarxaYkBK8+JLOsZxA45oEwPiwIvLj4Bi1N/h6SqCRt8E3j8M0PkanMEwXsgGOL8RygYYm3NlKxwB3l1vhg7K4j241g6XWAZW/dmgcwORagy6NBJzeiga9WeBEb+LTFUUxo43IFYnh3E8MYCqJqjev+M/jhYNfh5XtcA4N3WuUJi6wgIyrh+RGQrpXOBfDknpqDFa2DRgwDqWsQN8t2DhKsc2lrIAnIX0SHwAp/7ZYevp9ttWXYelE35MQRAEQRAEAU38Ali4UumShvNJAAAAAElFTkSuQmCC"
+            />
         </div>
     );
 };
