@@ -1,5 +1,3 @@
-import React from "react";
-
 const Searchbox = () => {
     return (
         <div className="flex items-center m-3 px-4">

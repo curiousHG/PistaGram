@@ -1,4 +1,3 @@
-import React from "react";
 import Searchbox from "./Searchbox";
 import Rooms from "./Rooms";
 import LogoutBtn from "./LogoutBtn";

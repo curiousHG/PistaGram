@@ -1,5 +1,3 @@
-import React from "react";
-
 interface ReceiverInfoProps {
     username: string;
     avatarUrl: string;

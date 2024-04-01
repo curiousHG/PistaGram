@@ -1,5 +1,3 @@
-import React from "react";
-
 interface UserSidebarInfo {
     username: string;
     avatarUrl: string;
