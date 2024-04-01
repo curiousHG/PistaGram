@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import generateJWT from "../Utils/generateJWT.js";
 
 export const signup = async (req, res) => {
+    console.log(req);
     try {
         const { firstName, lastName, username, email, password } = req.body;
         const query = {
@@ -52,7 +53,7 @@ export const signup = async (req, res) => {
         }
     } catch (error) {
         console.log("Error in Signup Controller: ", error.message);
-        res.status(500).json({
+        return res.status(500).json({
             error: "Server Error: Internal error occurred during sign up!",
         });
     }

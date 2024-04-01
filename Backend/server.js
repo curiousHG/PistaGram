@@ -19,7 +19,7 @@ app.use("/api/users", userRouter);
 app.use("/api/messages", messagingRouter);
 
 // Start Server on default PORT
-app.listen(PORT, () => {
-    connectMongoDB();
+app.listen(PORT, async () => {
+    await connectMongoDB();
     console.log(`Running on PORT -> ${PORT}`);
 });
