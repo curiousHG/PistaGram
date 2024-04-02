@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import generateJWT from "../Utils/generateJWT.js";
 
 export const signup = async (req, res) => {
-    console.log(req);
     try {
         const { firstName, lastName, username, email, password } = req.body;
         const query = {
@@ -17,9 +16,11 @@ export const signup = async (req, res) => {
             User.find({ email: query.email });
 
         if (user) {
-            return res.status(400).json({
+            res.status(400).json({
                 error: `User with username- ${username} and email- ${email} already exists! Either Login or choose a different field`,
             });
+            res.send();
+            return;
         }
 
         // Hash the password
@@ -44,18 +45,20 @@ export const signup = async (req, res) => {
             generateJWT(registeredUser._id, res);
 
             delete userData.password;
-            return res.status(201).json({
+            res.status(201).json({
                 _id: registeredUser._id,
                 userData: userData,
             });
         } else {
-            return res.status(400).json({ error: "User data found invalid!" });
+            res.status(400).json({ error: "User data found invalid!" });
         }
+        res.send();
     } catch (error) {
         console.log("Error in Signup Controller: ", error.message);
-        return res.status(500).json({
+        res.status(500).json({
             error: "Server Error: Internal error occurred during sign up!",
         });
+        res.send();
     }
 };
 
