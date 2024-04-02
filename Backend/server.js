@@ -10,7 +10,7 @@ import userRouter from "./Routers/userRouter.js";
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cookieParser);
+app.use(cookieParser());
 const PORT = process.env.PORT || 8000;
 
 // Route Handlers

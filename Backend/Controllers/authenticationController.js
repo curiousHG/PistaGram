@@ -11,16 +11,14 @@ export const signup = async (req, res) => {
         };
 
         // Search in DB for user and email infos
-        const user =
-            (await User.find({ username: query.username })) ||
-            User.find({ email: query.email });
+        const user = await User.findOne({ username: query.username });
+
+        console.log(user);
 
         if (user) {
-            res.status(400).json({
+            return res.status(400).json({
                 error: `User with username- ${username} and email- ${email} already exists! Either Login or choose a different field`,
             });
-            res.send();
-            return;
         }
 
         // Hash the password
@@ -52,13 +50,11 @@ export const signup = async (req, res) => {
         } else {
             res.status(400).json({ error: "User data found invalid!" });
         }
-        res.send();
     } catch (error) {
         console.log("Error in Signup Controller: ", error.message);
         res.status(500).json({
             error: "Server Error: Internal error occurred during sign up!",
         });
-        res.send();
     }
 };
 
