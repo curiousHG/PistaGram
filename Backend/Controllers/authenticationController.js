@@ -4,16 +4,16 @@ import generateJWT from "../Utils/generateJWT.js";
 
 export const signup = async (req, res) => {
     try {
-        const { firstName, lastName, username, email, password } = req.body;
+        const { firstname, lastname, username, email, password } = req.body;
         const query = {
             username: username,
             email: email,
         };
 
         // Search in DB for user and email infos
-        const user = await User.findOne({ username: query.username });
-
-        console.log(user);
+        const user =
+            (await User.findOne({ username: query.username })) ||
+            (await User.findOne({ email: query.email }));
 
         if (user) {
             return res.status(400).json({
@@ -22,13 +22,13 @@ export const signup = async (req, res) => {
         }
 
         // Hash the password
-        const salt = await bcrypt.genSalt(30);
+        const salt = await bcrypt.genSalt(10);
         const hashedPwd = await bcrypt.hash(password, salt);
 
-        const defaultProfilePic = `https://avatar.iran.liara.run/username?username=[${firstname}+${lastName}]`;
+        const defaultProfilePic = `https://avatar.iran.liara.run/username?username=${firstname}+${lastname}`;
         const userData = {
-            firstName: firstName,
-            lastName: lastName,
+            firstname: firstname,
+            lastname: lastname,
             username: username,
             email: email,
             password: hashedPwd,
