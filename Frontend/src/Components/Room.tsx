@@ -6,7 +6,7 @@ interface UserSidebarInfo {
 }
 
 const Room = ({ room, lastIndex }: UserSidebarInfo) => {
-    // const { selectedRoom, setSelectedRoom } = useSelectedContext();
+    const { selectedRoom, setSelectedRoom } = useSelectedContext();
     const isSelected: boolean = selectedRoom?._id === room._id;
 
     return (
@@ -17,7 +17,7 @@ const Room = ({ room, lastIndex }: UserSidebarInfo) => {
             <div className="flex gap-4 items-center hover:bg-gray-500 rounded p-3 py-2 cursor-pointer">
                 <div className="avatar online">
                     <div className="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                        <img src={room.avatarUrl} alt="user avatar" />
+                        <img src={room.profilePicture} alt="user avatar" />
                     </div>
                 </div>
                 <div className="flex flex-col flex-1">

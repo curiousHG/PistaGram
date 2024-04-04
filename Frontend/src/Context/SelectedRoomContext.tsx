@@ -6,10 +6,8 @@ export const useSelectedContext = () => {
     return useContext(SelectedRoomContext);
 };
 
-export const SRoomContextProvider = (props: any) => {
-    const [selectedRoom, setSelectedRoom] = useState(
-        JSON.parse(localStorage.getItem("selected-room")) || null
-    );
+export const SelectedRoomContextProvider = (props: any) => {
+    const [selectedRoom, setSelectedRoom] = useState(null);
 
     return (
         <SelectedRoomContext.Provider value={{ selectedRoom, setSelectedRoom }}>

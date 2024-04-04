@@ -4,12 +4,15 @@ import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { AuthContextProvider } from "./Context/AuthContext.tsx";
+import { SelectedRoomContextProvider } from "./Context/SelectedRoomContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <BrowserRouter>
             <AuthContextProvider>
-                <App />
+                <SelectedRoomContextProvider>
+                    <App />
+                </SelectedRoomContextProvider>
             </AuthContextProvider>
         </BrowserRouter>
     </React.StrictMode>
