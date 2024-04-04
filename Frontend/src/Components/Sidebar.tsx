@@ -4,7 +4,7 @@ import LogoutBtn from "./LogoutBtn";
 
 const Sidebar = () => {
     return (
-        <div className="flex flex-col justify-between w-1/3">
+        <div className="flex flex-col justify-between gap-0 w-1/3">
             <div>
                 <div className="h-20">
                     <Searchbox />
@@ -12,7 +12,8 @@ const Sidebar = () => {
                 </div>
                 <div
                     style={{
-                        maxHeight: "550px",
+                        height: "85%",
+                        maxHeight: "560px",
                         overflowY: "auto",
                     }}
                 >
