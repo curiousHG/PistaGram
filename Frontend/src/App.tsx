@@ -21,6 +21,16 @@ function App() {
                     path="/signup"
                     element={authUser ? <Navigate to="/" /> : <SignUp />}
                 />
+                <Route
+                    path="*"
+                    element={
+                        authUser ? (
+                            <Navigate to="/" />
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    }
+                />
             </Routes>
             <Toaster
                 position="top-center"

@@ -1,8 +1,13 @@
 import { useState } from "react";
 import useLogin from "../Hooks/useLogin";
+import toast from "react-hot-toast";
 
 const Login = () => {
     const [formData, setFormData] = useState({
+        username: "",
+        password: "",
+    });
+    const [formDataError, setFormDataError] = useState({
         username: "",
         password: "",
     });
@@ -10,6 +15,11 @@ const Login = () => {
 
     const handleSubmitFormHandler = async (e: any) => {
         e.preventDefault();
+        if (formData.username === "" || formData.password === "") {
+            toast.error("Some fields are found empty!!");
+            return;
+        }
+
         await login(formData);
     };
 
@@ -31,12 +41,26 @@ const Login = () => {
                             className="w-full input input-bordered h-10"
                             value={formData.username}
                             onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setFormDataError({
+                                        ...formDataError,
+                                        username: "Username Cannot be empty!!",
+                                    });
+                                } else {
+                                    setFormDataError({
+                                        ...formDataError,
+                                        username: "",
+                                    });
+                                }
                                 setFormData({
                                     ...formData,
                                     username: e.target.value,
                                 });
                             }}
                         />
+                        <p className="text-xs text-red-500">
+                            {formDataError.username}
+                        </p>
                     </div>
                     <div>
                         <label className="label p-2 font-semibold">
@@ -49,12 +73,26 @@ const Login = () => {
                             className="w-full input input-bordered h-10"
                             value={formData.password}
                             onChange={(e) => {
+                                if (e.target.value === "") {
+                                    setFormDataError({
+                                        ...formDataError,
+                                        password: "Password Cannot be empty!!",
+                                    });
+                                } else {
+                                    setFormDataError({
+                                        ...formDataError,
+                                        password: "",
+                                    });
+                                }
                                 setFormData({
                                     ...formData,
                                     password: e.target.value,
                                 });
                             }}
                         />
+                        <p className="text-xs text-red-500">
+                            {formDataError.password}
+                        </p>
                     </div>
                     <a
                         href="/signup"
