@@ -42,10 +42,12 @@ export const signup = async (req, res) => {
 
             generateJWT(registeredUser._id, res);
 
-            delete userData.password;
             res.status(201).json({
                 _id: registeredUser._id,
-                userData: userData,
+                firstname: userData.firstname,
+                lastname: userData.lastname,
+                email: userData.email,
+                profilePicture: userData.profilePicture,
             });
         } else {
             res.status(400).json({ error: "User data found invalid!" });
@@ -64,8 +66,7 @@ export const login = async (req, res) => {
         const query = {
             username: username,
         };
-        const user = User.findOne(query);
-
+        const user = await User.findOne(query);
         if (user) {
             const correctPwd = await bcrypt.compare(password, user.password);
             if (!correctPwd) {
@@ -85,13 +86,13 @@ export const login = async (req, res) => {
                 profilePicture: user.profilePicture,
             });
         } else {
-            return res.status(404).json({
+            res.status(404).json({
                 error: `User with username- ${username} is not registered! Please Signup first to login`,
             });
         }
     } catch (error) {
         console.log("Error in Login Controller: ", error.message);
-        return res.status(500).json({
+        res.status(500).json({
             error: "Server Error: Internal error occurred during login!",
         });
     }
