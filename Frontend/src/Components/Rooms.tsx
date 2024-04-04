@@ -1,32 +1,21 @@
+import useGetRooms from "../Hooks/useGetRooms";
 import Room from "./Room";
 
 const Rooms = () => {
+    const { loading, roomData } = useGetRooms();
     return (
         <div className="overflow-x-hidden">
-            <Room
-                username="John Doe"
-                avatarUrl="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-            />
-            <Room
-                username="Daisy Keech"
-                avatarUrl="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-            />
-            <Room
-                username="Riley Reid"
-                avatarUrl="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-            />
-            <Room
-                username="Riley Reid"
-                avatarUrl="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-            />
-            <Room
-                username="Riley Reid"
-                avatarUrl="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-            />
-            <Room
-                username="Riley Reid"
-                avatarUrl="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-            />
+            {loading ? (
+                <span className="text-center loading loading-spinner loading-xl"></span>
+            ) : (
+                roomData.map((room, index) => (
+                    <Room
+                        key={room._id}
+                        room={room}
+                        lastIndex={index === roomData.length - 1}
+                    />
+                ))
+            )}
         </div>
     );
 };
