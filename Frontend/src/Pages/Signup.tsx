@@ -236,8 +236,13 @@ const SignUp = () => {
                         <button
                             className="btn glass btn-md mt-2 mr-auto ml-auto"
                             onClick={handleSubmitFormHandler}
+                            disabled={loading}
                         >
-                            Signup
+                            {loading ? (
+                                <span className="loading loading-spinner"></span>
+                            ) : (
+                                "Signup"
+                            )}
                         </button>
                     </div>
                 </form>

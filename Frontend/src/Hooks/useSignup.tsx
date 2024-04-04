@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { useAuthContext } from "../Context/AuthContext";
 
 interface ISignup {
     firstname: string;
@@ -11,6 +12,7 @@ interface ISignup {
 
 const useSignup = () => {
     const [loading, setLoading] = useState(false);
+    const { setAuthUser } = useAuthContext();
 
     const signup = async ({
         firstname,
@@ -34,7 +36,14 @@ const useSignup = () => {
             });
 
             const data = await res.json();
-            console.log(data);
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            localStorage.setItem("auth-user", JSON.stringify(data));
+
+            setAuthUser(data);
         } catch (error: any) {
             toast.error(error.message);
         } finally {
