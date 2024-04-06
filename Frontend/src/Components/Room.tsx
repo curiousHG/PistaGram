@@ -1,4 +1,4 @@
-import { useRoomContext } from "../Context/SelectedRoomContext";
+import useRoom from "../Context/SelectedRoomContext";
 
 interface UserSidebarInfo {
     room: any;
@@ -6,7 +6,7 @@ interface UserSidebarInfo {
 }
 
 const Room = ({ room, lastIndex }: UserSidebarInfo) => {
-    const { selectedRoom, setSelectedRoom } = useRoomContext();
+    const { selectedRoom, setSelectedRoom } = useRoom();
     const isSelected: boolean = selectedRoom?._id === room._id;
 
     const selectedStyle: string = isSelected

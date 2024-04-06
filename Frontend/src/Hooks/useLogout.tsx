@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { useAuthContext } from "../Context/AuthContext";
 import toast from "react-hot-toast";
-import { useRoomContext } from "../Context/SelectedRoomContext";
 
 const useLogout = () => {
     const [loading, setLoading] = useState(false);
     const { setAuthUser } = useAuthContext();
-    const { setSelectedRoom } = useRoomContext();
 
     const logout = async () => {
         setLoading(true);
@@ -24,7 +22,7 @@ const useLogout = () => {
 
             localStorage.removeItem("auth-user");
             setAuthUser(null);
-            setSelectedRoom(null);
+            // Clear room context
         } catch (error: any) {
             toast.error(error.message);
         } finally {

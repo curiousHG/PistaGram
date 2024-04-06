@@ -5,7 +5,7 @@ import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../Context/AuthContext.js";
 
 interface MessageContainerProps {
-    room: any;
+    room?: any;
     defaultView: boolean;
 }
 

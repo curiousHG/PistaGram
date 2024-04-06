@@ -1,22 +1,10 @@
-import { createContext, useContext, useState } from "react";
+import { create } from "zustand";
 
-export const RoomContext = createContext({});
+const useRoom = create((set) => ({
+    selectedRoom: null,
+    setSelectedRoom: (selectedRoom: any) => set({ selectedRoom }),
+    messages: [],
+    setMesssages: (messages: any) => set({ messages }),
+}));
 
-export const useRoomContext = () => {
-    return useContext(RoomContext);
-};
-
-export const RoomContextProvider = (props: any) => {
-    const [selectedRoom, setSelectedRoom] = useState(null);
-
-    return (
-        <RoomContext.Provider
-            value={{
-                selectedRoom,
-                setSelectedRoom,
-            }}
-        >
-            {props.children}
-        </RoomContext.Provider>
-    );
-};
+export default useRoom;
