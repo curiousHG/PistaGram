@@ -10,16 +10,15 @@ const Room = ({ room, lastIndex }: UserSidebarInfo) => {
     const isSelected: boolean = selectedRoom?._id === room._id;
 
     const selectedStyle: string = isSelected
-        ? "bg-gray-400 scale-110"
+        ? "bg-gray-500 scale-110"
         : "hover:bg-gray-500 hover:scale-110";
     const className: string = `flex flex-col gap-2 px-2 my-2 ${selectedStyle} `;
-    console.log(isSelected);
+
     return (
         <div
             className={className}
             onClick={() => {
                 setSelectedRoom(room);
-                console.log(selectedRoom);
             }}
         >
             <div className="flex gap-4 items-center rounded p-3 py-2 cursor-pointer">

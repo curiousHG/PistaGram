@@ -4,10 +4,11 @@ import MessageInput from "./MessageInput.js";
 import { TiMessages } from "react-icons/ti";
 
 interface MessageContainerProps {
+    room: any;
     defaultView: boolean;
 }
 
-const MessageContainer = ({ defaultView }: MessageContainerProps) => {
+const MessageContainer = ({ room, defaultView }: MessageContainerProps) => {
     const DefaultViewJSX = () => {
         return (
             <div className="flex items-center justify-center w-full h-full">
@@ -23,21 +24,14 @@ const MessageContainer = ({ defaultView }: MessageContainerProps) => {
     const RoomViewJSX = () => {
         return (
             <div className="flex flex-col justify-between bg-white-400 m-3 w-full rounded-3xl">
-                <ReceiverInfo
-                    username="John Doe"
-                    avatarUrl="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-                />
+                <ReceiverInfo room={room} />
                 <MessageBody />
                 <MessageInput />
             </div>
         );
     };
 
-    if (defaultView) {
-        return <DefaultViewJSX />;
-    } else {
-        return <RoomViewJSX />;
-    }
+    return defaultView ? <DefaultViewJSX /> : <RoomViewJSX />;
 };
 
 export default MessageContainer;

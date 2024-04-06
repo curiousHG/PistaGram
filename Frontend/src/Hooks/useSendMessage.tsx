@@ -1,30 +1,32 @@
 import React, { useState } from "react";
-import { useAuthContext } from "../Context/AuthContext";
 import toast from "react-hot-toast";
 import { useRoomContext } from "../Context/SelectedRoomContext";
 
-const useLogout = () => {
-    const [loading, setLoading] = useState(false);
-    const { setAuthUser } = useAuthContext();
-    const { setSelectedRoom } = useRoomContext();
+interface SendMessageProps {
+    message: string;
+}
 
-    const logout = async () => {
+const useSendMessage = () => {
+    const [loading, setLoading] = useState(false);
+    const { selectedRoom, setSelectedRoom } = useRoomContext();
+
+    const sendMessage = async ({ message }: SendMessageProps) => {
         setLoading(true);
+
         try {
-            const res = await fetch("/api/auth/logout", {
+            const res = await fetch(`/api/messages/send/${selectedRoom._id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
+                body: JSON.stringify({ message }),
             });
+
             const data = await res.json();
+
             if (data.error) {
                 throw new Error(data.error);
             }
-
-            localStorage.removeItem("auth-user");
-            setAuthUser(null);
-            setSelectedRoom(null);
         } catch (error: any) {
             toast.error(error.message);
         } finally {
@@ -32,7 +34,7 @@ const useLogout = () => {
         }
     };
 
-    return { loading, logout };
+    return { loading, sendMessage };
 };
 
-export default useLogout;
+export default useSendMessage;
