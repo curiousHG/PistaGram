@@ -13,7 +13,7 @@ const Message = ({
     createdAt,
     messageType,
 }: MessageProps) => {
-    const messageClassName = `chat chat-${messageType} break-words`;
+    const messageClassName = `chat chat-${messageType}`;
     return (
         <div className={messageClassName}>
             <div className="chat-image avatar">
@@ -28,7 +28,8 @@ const Message = ({
                 {username}
                 <time className="text-xs opacity-50">{createdAt}</time>
             </div>
-            <div className="chat-bubble hover:scale-110">{message}</div>
+            <div className="chat-bubble">{message}</div>
+            <div className="chat-footer opacity-50"></div>
         </div>
     );
 };

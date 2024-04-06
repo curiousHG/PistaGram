@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useRoomContext } from "../Context/SelectedRoomContext";
+import { useRoomMessagesContext } from "../Context/SelectedRoomMessagesContext";
 
 interface SendMessageProps {
     message: string;
@@ -8,7 +9,7 @@ interface SendMessageProps {
 
 const useSendMessage = () => {
     const [loading, setLoading] = useState(false);
-    const { selectedRoom, setSelectedRoom } = useRoomContext();
+    const { selectedRoom } = useRoomContext();
 
     const sendMessage = async ({ message }: SendMessageProps) => {
         setLoading(true);
@@ -23,7 +24,6 @@ const useSendMessage = () => {
             });
 
             const data = await res.json();
-
             if (data.error) {
                 throw new Error(data.error);
             }
