@@ -2,6 +2,7 @@ import ReceiverInfo from "./ReceiverInfo.js";
 import MessageBody from "./MessageBody.js";
 import MessageInput from "./MessageInput.js";
 import { TiMessages } from "react-icons/ti";
+import { useAuthContext } from "../Context/AuthContext.js";
 
 interface MessageContainerProps {
     room: any;
@@ -9,11 +10,18 @@ interface MessageContainerProps {
 }
 
 const MessageContainer = ({ room, defaultView }: MessageContainerProps) => {
+    const { authUser } = useAuthContext();
     const DefaultViewJSX = () => {
         return (
             <div className="flex items-center justify-center w-full h-full">
                 <div className="px-4 text-center sm:text-lg md:text-xl text-gray-200 font-semibold flex flex-col items-center gap-2">
-                    <p> Welcome John Doe</p>
+                    <p>
+                        {" "}
+                        Welcome{" "}
+                        <span className="text-black text-3xl">
+                            {authUser.username}
+                        </span>
+                    </p>
                     <p> Select a room to view chat history</p>
                     <TiMessages className="text-3xl" />
                 </div>

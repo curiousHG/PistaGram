@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useRoomContext } from "../Context/SelectedRoomContext";
-import { useRoomMessagesContext } from "../Context/SelectedRoomMessagesContext";
 
 interface SendMessageProps {
     message: string;

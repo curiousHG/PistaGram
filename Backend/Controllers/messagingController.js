@@ -29,7 +29,6 @@ export const registerMessage = async (req, res) => {
         const { message } = req.body;
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
-
         let room = await Room.findOne({
             people: { $all: [senderId, receiverId] },
         });
@@ -47,11 +46,9 @@ export const registerMessage = async (req, res) => {
         });
 
         if (!newMessage) {
-            return res
-                .status(400)
-                .json({
-                    error: "Internal Server error while creating new message!",
-                });
+            return res.status(400).json({
+                error: "Internal Server error while creating new message!",
+            });
         }
 
         room.messages.push(newMessage._id);
