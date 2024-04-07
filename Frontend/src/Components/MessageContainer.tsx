@@ -3,14 +3,17 @@ import MessageBody from "./MessageBody.js";
 import MessageInput from "./MessageInput.js";
 import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../Context/AuthContext.js";
+import useRoom from "../Context/SelectedRoomContext.js";
+import { useEffect } from "react";
 
-interface MessageContainerProps {
-    room?: any;
-    defaultView: boolean;
-}
-
-const MessageContainer = ({ room, defaultView }: MessageContainerProps) => {
+const MessageContainer = () => {
     const { authUser } = useAuthContext();
+    const { selectedRoom, setSelectedRoom } = useRoom();
+
+    useEffect(() => {
+        return () => setSelectedRoom(null);
+    }, [setSelectedRoom]);
+
     const DefaultViewJSX = () => {
         return (
             <div className="flex items-center justify-center w-full h-full">
@@ -32,14 +35,20 @@ const MessageContainer = ({ room, defaultView }: MessageContainerProps) => {
     const RoomViewJSX = () => {
         return (
             <div className="flex flex-col justify-between bg-white-400 m-3 w-full rounded-3xl">
-                <ReceiverInfo room={room} />
+                <ReceiverInfo />
                 <MessageBody />
                 <MessageInput />
             </div>
         );
     };
 
-    return defaultView ? <DefaultViewJSX /> : <RoomViewJSX />;
+    const { setMessages } = useRoom();
+
+    useEffect(() => {
+        return () => setMessages([]);
+    }, [selectedRoom]);
+
+    return selectedRoom === null ? <DefaultViewJSX /> : <RoomViewJSX />;
 };
 
 export default MessageContainer;

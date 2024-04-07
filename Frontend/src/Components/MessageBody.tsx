@@ -1,18 +1,24 @@
 import { useAuthContext } from "../Context/AuthContext";
+import useRoom from "../Context/SelectedRoomContext";
+import Message from "./Message";
+import useGetMessages from "../Hooks/useGetMessages";
 
 const MessageBody = () => {
     const { authUser } = useAuthContext();
+    const { selectedRoom } = useRoom();
+
+    const { loading, messages } = useGetMessages();
 
     return (
         <div className="px-4 h-full mb-3 overflow-auto">
-            {/* {roomMessages?.map((message) => (
+            {messages?.map((message) => (
                 <Message
                     key={message._id}
                     sender={authUser}
                     receiver={selectedRoom}
                     message={message}
                 />
-            ))} */}
+            ))}
         </div>
     );
 };

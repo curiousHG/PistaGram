@@ -1,28 +1,31 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import useRoom from "../Context/SelectedRoomContext";
 
 interface SendMessageProps {
     message: string;
 }
 
 const useSendMessage = () => {
+    const { messages, selectedRoom, setMessages } = useRoom();
     const [loading, setLoading] = useState(false);
 
     const sendMessage = async ({ message }: SendMessageProps) => {
         setLoading(true);
 
         try {
-            // const res = await fetch(`/api/messages/send/${selectedRoom._id}`, {
-            //     method: "POST",
-            //     headers: {
-            //         "Content-Type": "application/json",
-            //     },
-            //     body: JSON.stringify({ message }),
-            // });
-            // const data = await res.json();
-            // if (data.error) {
-            //     throw new Error(data.error);
-            // }
+            const res = await fetch(`/api/messages/send/${selectedRoom?._id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ message }),
+            });
+            const data = await res.json();
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            setMessages([...messages, data]);
         } catch (error: any) {
             toast.error(error.message);
         } finally {
