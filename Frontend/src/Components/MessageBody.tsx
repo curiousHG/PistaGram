@@ -10,15 +10,19 @@ const MessageBody = () => {
     const { loading, messages } = useGetMessages();
 
     return (
-        <div className="px-4 h-full mb-3 overflow-auto">
-            {messages?.map((message) => (
-                <Message
-                    key={message._id}
-                    sender={authUser}
-                    receiver={selectedRoom}
-                    message={message}
-                />
-            ))}
+        <div className="px-4 h-full mb-3 overflow-auto scroll-bottom">
+            {loading ? (
+                <span className="loading loading-spinner"></span>
+            ) : (
+                messages?.map((message) => (
+                    <Message
+                        key={message._id}
+                        sender={authUser}
+                        receiver={selectedRoom}
+                        message={message}
+                    />
+                ))
+            )}
         </div>
     );
 };

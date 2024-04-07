@@ -6,9 +6,9 @@ interface MessageProps {
 
 const Message = ({ sender, receiver, message }: MessageProps) => {
     const senderId = message.senderId;
-    let messageClassName = "chat chat-start";
+    let messageClassName = "chat chat-start break-words";
     if (senderId === sender._id) {
-        messageClassName = "chat chat-end";
+        messageClassName = "chat chat-end break-words";
     }
     const profilePicture =
         senderId === sender._id
