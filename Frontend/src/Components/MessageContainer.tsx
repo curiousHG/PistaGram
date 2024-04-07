@@ -33,7 +33,7 @@ const MessageContainer = () => {
 
     const RoomViewJSX = () => {
         return (
-            <div className="flex flex-col justify-evenly bg-white-400 m-3 w-full rounded-3xl">
+            <div className="flex flex-col justify-evenly bg-white-400 m-2 w-full rounded-3xl">
                 <ReceiverInfo />
                 <MessageBody />
             </div>

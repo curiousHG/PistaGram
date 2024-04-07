@@ -51,7 +51,7 @@ const Message = ({ sender, receiver, message }: MessageProps) => {
                     {convertCreatedAt(message.createdAt)}
                 </time>
             </div>
-            <div className="chat-bubble">{message.message}</div>
+            <div className="chat-bubble hover:scale-110">{message.message}</div>
             <div className="chat-footer opacity-50">Delivered</div>
         </div>
     );

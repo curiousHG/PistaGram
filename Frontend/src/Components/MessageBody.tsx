@@ -3,7 +3,7 @@ import { useAuthContext } from "../Context/AuthContext";
 import useRoom from "../Context/SelectedRoomContext";
 import Message from "./Message";
 import useSendMessage from "../Hooks/useSendMessage";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 const DEFAULT_MESSAGES: any[] = [];
@@ -15,6 +15,8 @@ const MessageBody = () => {
     // Loading state of the page
     const [loading, setLoading] = useState(false);
 
+    const lastMessage = useRef(null);
+
     // For message body
     const [messages, setMessages] = useState(DEFAULT_MESSAGES);
 
@@ -24,6 +26,7 @@ const MessageBody = () => {
         if (message !== "") {
             const data = await sendMessage({ message });
             setMessages([...messages, data]);
+            lastMessage.current = data;
             setMessage("");
         }
     };
@@ -38,6 +41,8 @@ const MessageBody = () => {
                     throw new Error(data.error);
                 }
                 setMessages(data);
+                lastMessage.current = data[data.length - 1];
+                console.log(lastMessage.current);
             } catch (error: any) {
                 toast.error(error.message);
             } finally {
@@ -45,11 +50,14 @@ const MessageBody = () => {
             }
         };
         getMessages();
-    }, []);
+    }, [selectedRoom]);
 
     return (
-        <div className="flex flex-col justify-between px-4">
-            <div style={{ height: "500px" }} className="overflow-auto  p-3">
+        <div className="flex flex-col h-full justify-between px-4">
+            <div
+                style={{ height: "100%", maxHeight: "500px" }}
+                className="overflow-auto px-2 mt-3"
+            >
                 {loading ? (
                     <span className="loading loading-spinner"></span>
                 ) : (
@@ -63,7 +71,7 @@ const MessageBody = () => {
                     ))
                 )}
             </div>
-            <div className="p-2 w-full flex justify-center items-center">
+            <div className="mb-3 w-full flex justify-center items-center">
                 <label className="w-full input input-bordered flex items-center gap-2">
                     <input
                         type="text"
