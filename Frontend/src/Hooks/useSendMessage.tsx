@@ -7,7 +7,7 @@ interface SendMessageProps {
 }
 
 const useSendMessage = () => {
-    const { messages, selectedRoom, setMessages } = useRoom();
+    const { selectedRoom } = useRoom();
     const [loading, setLoading] = useState(false);
 
     const sendMessage = async ({ message }: SendMessageProps) => {
@@ -25,7 +25,7 @@ const useSendMessage = () => {
             if (data.error) {
                 throw new Error(data.error);
             }
-            setMessages([...messages, data]);
+            return data;
         } catch (error: any) {
             toast.error(error.message);
         } finally {

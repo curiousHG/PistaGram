@@ -1,6 +1,5 @@
 import ReceiverInfo from "./ReceiverInfo.js";
 import MessageBody from "./MessageBody.js";
-import MessageInput from "./MessageInput.js";
 import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../Context/AuthContext.js";
 import useRoom from "../Context/SelectedRoomContext.js";
@@ -34,20 +33,12 @@ const MessageContainer = () => {
 
     const RoomViewJSX = () => {
         return (
-            <div className="flex flex-col justify-between bg-white-400 m-3 w-full rounded-3xl">
+            <div className="flex flex-col justify-evenly bg-white-400 m-3 w-full rounded-3xl">
                 <ReceiverInfo />
                 <MessageBody />
-                <MessageInput />
             </div>
         );
     };
-
-    const { setMessages } = useRoom();
-
-    useEffect(() => {
-        return () => setMessages([]);
-    }, [selectedRoom]);
-
     return selectedRoom === null ? <DefaultViewJSX /> : <RoomViewJSX />;
 };
 

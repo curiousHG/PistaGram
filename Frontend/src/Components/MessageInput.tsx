@@ -2,13 +2,13 @@ import { useState } from "react";
 import { IoSendSharp } from "react-icons/io5";
 import useSendMessage from "../Hooks/useSendMessage";
 
-const MessageInput = () => {
+const MessageInput = (messages: any, setMessages: any) => {
     const [message, setMessage] = useState("");
     const { loading, sendMessage } = useSendMessage();
 
     const handleSendMessage = async () => {
         if (message !== "") {
-            await sendMessage({ message });
+            await sendMessage({ message, messages, setMessages });
             setMessage("");
         }
     };
