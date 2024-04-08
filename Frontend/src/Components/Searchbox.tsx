@@ -3,8 +3,11 @@ import { useSearchBoxContext } from "../Context/SearchBoxContext";
 const Searchbox = () => {
     const { searchBox, setSearchBox } = useSearchBoxContext();
     return (
-        <div className="flex items-center m-3 px-4">
-            <label className="input input-bordered flex items-center justify-between w-full">
+        <div className="flex items-center w-full p-3">
+            <label
+                className="input input-bordered flex items-center"
+                style={{ width: "100%" }}
+            >
                 <input
                     type="text"
                     className="grow"
