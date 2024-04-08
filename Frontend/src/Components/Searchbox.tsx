@@ -1,8 +1,19 @@
+import { useSearchBoxContext } from "../Context/SearchBoxContext";
+
 const Searchbox = () => {
+    const { searchBox, setSearchBox } = useSearchBoxContext();
     return (
         <div className="flex items-center m-3 px-4">
             <label className="input input-bordered flex items-center justify-between w-full">
-                <input type="text" className="grow" placeholder="Search" />
+                <input
+                    type="text"
+                    className="grow"
+                    placeholder="Search"
+                    value={searchBox}
+                    onChange={(e) => {
+                        setSearchBox(e.target.value);
+                    }}
+                />
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
