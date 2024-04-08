@@ -1,14 +1,33 @@
+import { useEffect, useState } from "react";
+import { useSearchBoxContext } from "../Context/SearchBoxContext";
 import useGetRooms from "../Hooks/useGetRooms";
 import Room from "./Room";
 
 const Rooms = () => {
+    const { searchBox } = useSearchBoxContext();
     const { loading, roomData } = useGetRooms();
+    const [filteredRoomData, setFilteredRoomData] = useState(roomData);
+
+    useEffect(() => {
+        if (!loading) {
+            setFilteredRoomData(roomData);
+        }
+    }, [loading, roomData]);
+
+    useEffect(() => {
+        if (!loading) {
+            setFilteredRoomData(
+                roomData.filter((room) => room.username.includes(searchBox))
+            );
+        }
+    }, [loading, roomData, searchBox]);
+
     return (
         <div className="overflow-x-hidden">
             {loading ? (
                 <span className="text-center loading loading-spinner loading-xl"></span>
             ) : (
-                roomData.map((room, index) => (
+                filteredRoomData.map((room, index) => (
                     <Room
                         key={room._id}
                         room={room}
