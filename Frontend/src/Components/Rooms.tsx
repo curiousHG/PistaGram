@@ -23,7 +23,7 @@ const Rooms = () => {
     }, [loading, roomData, searchBox]);
 
     return (
-        <div className="overflow-x-hidden">
+        <div className="overflow-x-hidden mt-3">
             {loading ? (
                 <span className="text-center loading loading-spinner loading-xl"></span>
             ) : (
