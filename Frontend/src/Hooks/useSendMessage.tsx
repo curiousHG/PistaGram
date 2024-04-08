@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import useRoom from "../Context/SelectedRoomContext";
-
-interface SendMessageProps {
-    message: string;
-}
+import { SendMessageProps } from "../interfaces";
 
 const useSendMessage = () => {
     const { selectedRoom } = useRoom();

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { IRoom } from "../interfaces";
 
-const DEFAULT_ROOM_DATA: any[] = [];
+const DEFAULT_ROOM_DATA: IRoom[] = [];
 
 const useGetRooms = () => {
     const [loading, setLoading] = useState(false);

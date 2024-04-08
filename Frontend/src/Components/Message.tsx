@@ -1,10 +1,7 @@
-interface MessageProps {
-    sender: any;
-    receiver: any;
-    message: any;
-}
+import { IMessageProps } from "../interfaces";
+import { convertCreatedAt } from "../utils";
 
-const Message = ({ sender, receiver, message }: MessageProps) => {
+const Message = ({ sender, receiver, message }: IMessageProps) => {
     const senderId = message.senderId;
     let messageClassName = "chat chat-start break-words";
     if (senderId === sender._id) {
@@ -16,28 +13,6 @@ const Message = ({ sender, receiver, message }: MessageProps) => {
             : receiver.profilePicture;
     const username =
         senderId === sender._id ? sender.username : receiver.username;
-
-    const format = (value: number): string => {
-        if (value < 10) return "0" + value.toString();
-        else {
-            return value.toString();
-        }
-    };
-
-    const convertCreatedAt = (timezone: string) => {
-        const dateTime = new Date(timezone);
-        return (
-            format(dateTime.getDate()) +
-            "/" +
-            format(dateTime.getMonth() + 1) +
-            "/" +
-            format(dateTime.getFullYear()) +
-            " " +
-            format(dateTime.getHours()) +
-            ":" +
-            format(dateTime.getMinutes())
-        );
-    };
 
     return (
         <div className={messageClassName}>

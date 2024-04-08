@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import { useAuthContext } from "../Context/AuthContext";
 import toast from "react-hot-toast";
-
-interface ILogin {
-    username: string;
-    password: string;
-}
+import { ILogin } from "../interfaces";
 
 const useLogin = () => {
     const [loading, setLoading] = useState(false);

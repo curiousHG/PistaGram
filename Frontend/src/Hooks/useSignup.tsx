@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useAuthContext } from "../Context/AuthContext";
-
-interface ISignup {
-    firstname: string;
-    lastname: string;
-    username: string;
-    email: string;
-    password: string;
-}
+import { ISignup } from "../interfaces";
 
 const useSignup = () => {
     const [loading, setLoading] = useState(false);

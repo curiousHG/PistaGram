@@ -1,9 +1,5 @@
 import useRoom from "../Context/SelectedRoomContext";
-
-interface UserSidebarInfo {
-    room: any;
-    lastIndex: boolean;
-}
+import { UserSidebarInfo } from "../interfaces";
 
 const Room = ({ room, lastIndex }: UserSidebarInfo) => {
     const { selectedRoom, setSelectedRoom } = useRoom();

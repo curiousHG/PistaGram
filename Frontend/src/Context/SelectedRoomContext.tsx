@@ -1,8 +1,9 @@
 import { create } from "zustand";
 
-const DEFAULT_MESSAGE_ARRAY: any[] = [];
+const DEFAULT_ROOM: any = null;
+
 const useRoom = create((set: any) => ({
-    selectedRoom: null,
+    selectedRoom: DEFAULT_ROOM,
     setSelectedRoom: (selectedRoom: any) => set({ selectedRoom }),
 }));
 

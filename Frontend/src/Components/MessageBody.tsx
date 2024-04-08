@@ -5,13 +5,15 @@ import Message from "./Message";
 import useSendMessage from "../Hooks/useSendMessage";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { IMessage } from "../interfaces";
 
-const DEFAULT_MESSAGES: any[] = [];
+const DEFAULT_MESSAGES: IMessage[] = [];
 
 const MessageBody = () => {
     const { authUser } = useAuthContext();
     const { selectedRoom } = useRoom();
     const { sendMessage } = useSendMessage();
+
     // Loading state of the page
     const [loading, setLoading] = useState(false);
 

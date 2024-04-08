@@ -1,6 +1,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import useSignup from "../Hooks/useSignup";
+import { emailValidationHandler } from "../utils";
 
 const SignUp = () => {
     const { loading, signup } = useSignup();
@@ -33,10 +34,6 @@ const SignUp = () => {
             return false;
         }
         return true;
-    };
-
-    const emailValidationHandler = (email: string) => {
-        return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
     };
 
     const confirmPasswordHandler = (e: any) => {

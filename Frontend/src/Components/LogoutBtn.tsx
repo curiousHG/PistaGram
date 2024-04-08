@@ -4,7 +4,6 @@ const LogoutBtn = () => {
     const { loading, logout } = useLogout();
 
     const logoutHandler = async () => {
-        console.log("Logut");
         await logout();
     };
 
