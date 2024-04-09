@@ -1,5 +1,6 @@
 import Message from "../Models/Message.js";
 import Room from "../Models/Room.js";
+import { getReceiverSocketId, io } from "../socket.js";
 
 export const getMessages = async (req, res) => {
     try {
@@ -54,6 +55,12 @@ export const registerMessage = async (req, res) => {
         room.messages.push(newMessage._id);
 
         await Promise.all([newMessage.save(), room.save()]);
+
+        const receiverSocketId = getReceiverSocketId(receiverId);
+
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("newMessage", newMessage);
+        }
 
         return res.status(201).json(newMessage);
     } catch (error) {
