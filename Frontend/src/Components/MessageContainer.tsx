@@ -2,7 +2,7 @@ import ReceiverInfo from "./ReceiverInfo.js";
 import MessageBody from "./MessageBody.js";
 import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../Context/AuthContext.js";
-import useRoom from "../Context/SelectedRoomContext.js";
+import { useRoom } from "../Context/RoomContext.js";
 import { useEffect } from "react";
 
 const MessageContainer = () => {

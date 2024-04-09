@@ -1,4 +1,4 @@
-import useRoom from "../Context/SelectedRoomContext";
+import { useRoom } from "../Context/RoomContext";
 
 const ReceiverInfo = () => {
     const { selectedRoom } = useRoom();

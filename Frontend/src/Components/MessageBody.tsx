@@ -1,23 +1,26 @@
 import { IoSendSharp } from "react-icons/io5";
 import { useAuthContext } from "../Context/AuthContext";
-import useRoom from "../Context/SelectedRoomContext";
+import { useRoom } from "../Context/RoomContext";
 import Message from "./Message";
 import useSendMessage from "../Hooks/useSendMessage";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { IMessage } from "../interfaces";
-
-const DEFAULT_MESSAGES: IMessage[] = [];
+import { useSocketContext } from "../Context/SocketContext";
+import newMessageRingtone from "../Assets/newMessageRingtone.mp3";
 
 const MessageBody = () => {
     const { authUser } = useAuthContext();
     const { selectedRoom } = useRoom();
     const { sendMessage } = useSendMessage();
+    const { socket } = useSocketContext();
+
+    const DEFAULT_MESSAGES: IMessage[] = [];
 
     // Loading state of the page
     const [loading, setLoading] = useState(false);
 
-    const lastMessage = useRef(null);
+    const lastMessage = useRef();
 
     // For message body
     const [messages, setMessages] = useState(DEFAULT_MESSAGES);
@@ -33,6 +36,7 @@ const MessageBody = () => {
         }
     };
 
+    // Load messages in the room when selectedRoom is changed
     useEffect(() => {
         const getMessages = async () => {
             setLoading(true);
@@ -43,8 +47,6 @@ const MessageBody = () => {
                     throw new Error(data.error);
                 }
                 setMessages(data);
-                lastMessage.current = data[data.length - 1];
-                console.log(lastMessage.current);
             } catch (error: any) {
                 toast.error(error.message);
             } finally {
@@ -53,6 +55,25 @@ const MessageBody = () => {
         };
         getMessages();
     }, [selectedRoom]);
+
+    // When messages is changed scroll to the bottom of it
+    useEffect(() => {
+        setTimeout(() => {
+            lastMessage.current?.scrollIntoView({ behavior: "smooth" });
+        }, 50);
+    }, [messages]);
+
+    // When socket listens to the event populate the messages with new messages
+    useEffect(() => {
+        console.log(socket);
+        socket?.on("newMessage", (newMessage: IMessage) => {
+            const sound = new Audio(newMessageRingtone);
+            sound.play();
+            setMessages([...messages, newMessage]);
+        });
+
+        return () => socket?.off("newMessage");
+    }, [socket, setMessages, messages]);
 
     return (
         <div className="flex flex-col h-full justify-between px-4">
@@ -64,12 +85,14 @@ const MessageBody = () => {
                     <span className="loading loading-spinner"></span>
                 ) : (
                     messages?.map((message) => (
-                        <Message
-                            key={message._id}
-                            sender={authUser}
-                            receiver={selectedRoom}
-                            message={message}
-                        />
+                        <div key={message._id} ref={lastMessage}>
+                            <Message
+                                key={message._id}
+                                sender={authUser}
+                                receiver={selectedRoom}
+                                message={message}
+                            />
+                        </div>
                     ))
                 )}
             </div>
