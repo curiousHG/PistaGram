@@ -65,7 +65,6 @@ const MessageBody = () => {
 
     // When socket listens to the event populate the messages with new messages
     useEffect(() => {
-        console.log(socket);
         socket?.on("newMessage", (newMessage: IMessage) => {
             const sound = new Audio(newMessageRingtone);
             sound.play();
