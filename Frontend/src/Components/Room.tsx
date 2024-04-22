@@ -22,7 +22,7 @@ const Room = ({ room, lastIndex }: UserSidebarInfo) => {
                 setSelectedRoom(room);
             }}
         >
-            <div className="flex gap-4 items-center rounded p-3 py-2 cursor-pointer">
+            <div className="flex flex-wrap gap-4 items-center rounded p-3 py-2 cursor-pointer">
                 <div className={onlineStatus}>
                     <div className="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                         <img src={room.profilePicture} alt="user avatar" />
