@@ -9,7 +9,7 @@ function App() {
     const { authUser } = useAuthContext();
 
     return (
-        <div className="p-4 h-screen flex items-center justify-center">
+        <div className="flex items-center justify-center overflow-hidden h-5/6 max-[640]:w-full min-[640]:w-5/6 p-4">
             <Routes>
                 <Route path="/" element={authUser ? <Home /> : <Login />} />
                 <Route
