@@ -19,13 +19,15 @@ const MessageContainer = () => {
                 <div className="px-4 text-center sm:text-lg md:text-xl text-gray-200 font-semibold flex flex-col items-center gap-2">
                     <p>
                         {" "}
-                        Welcome{" "}
+                        Welcome{"  "}
                         <span className="text-black text-3xl">
                             {authUser.username}
                         </span>
                     </p>
-                    <p> Select a room to view chat history</p>
-                    <TiMessages className="text-3xl" />
+                    <p> Select a room to view chat history </p>
+                    <div className="text-7xl">
+                        <TiMessages />
+                    </div>
                 </div>
             </div>
         );
@@ -33,7 +35,7 @@ const MessageContainer = () => {
 
     const RoomViewJSX = () => {
         return (
-            <div className="flex flex-col justify-evenly bg-white-400 m-2 w-full rounded-3xl">
+            <div className="h-full w-full flex flex-col justify-evenly bg-white-400 p-4 rounded-3xl">
                 <ReceiverInfo />
                 <MessageBody />
             </div>

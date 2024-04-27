@@ -4,23 +4,19 @@ import LogoutBtn from "./LogoutBtn";
 
 const Sidebar = () => {
     return (
-        <div className="flex flex-col justify-between gap-0 w-1/3">
-            <div>
-                <div className="h-20">
+        <div className="flex flex-col justify-between gap-0 w-1/3 p-2">
+            <div className="h-full">
+                <div className="h-1/6">
                     <Searchbox />
                     <div className="divider px-1"></div>
                 </div>
-                <div
-                    style={{
-                        height: "85%",
-                        maxHeight: "560px",
-                        overflowY: "auto",
-                    }}
-                >
+                <div className="h-5/6 max-h-[500px] overflow-y-auto">
                     <Rooms />
                 </div>
             </div>
-            <LogoutBtn />
+            <div className="h-10 my-2">
+                <LogoutBtn />
+            </div>
         </div>
     );
 };

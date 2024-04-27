@@ -3,7 +3,7 @@ import { useSearchBoxContext } from "../Context/SearchBoxContext";
 const Searchbox = () => {
     const { searchBox, setSearchBox } = useSearchBoxContext();
     return (
-        <div className="flex items-center w-full p-3">
+        <div className="flex items-center h-fit-content w-full p-3">
             <label
                 className="input input-bordered flex items-center"
                 style={{ width: "100%" }}
@@ -21,7 +21,7 @@ const Searchbox = () => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 16 16"
                     fill="currentColor"
-                    className="w-5 h-5 opacity-100"
+                    className="w-[30px] h-[30px] opacity-100"
                 >
                     <path
                         fillRule="evenodd"
