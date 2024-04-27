@@ -3,13 +3,13 @@ import MessageContainer from "../Components/MessageContainer";
 
 const Home = () => {
     return (
-        <div className="h-full max-h-[700px] w-full max-w-[900px] flex rounded-xl overflow-hidden bg-white-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
-            <Sidebar />
+        <div className="h-full max-h-[700px] m-2 w-full max-w-[900px] flex rounded-xl overflow-hidden bg-white-400 bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
+            <div className="w-1/3 xs:hidden">
+                <Sidebar />
+            </div>
             <MessageContainer />
         </div>
     );
 };
 
 export default Home;
-
-// 465px is breakpoint
