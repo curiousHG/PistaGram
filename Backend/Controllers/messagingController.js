@@ -53,6 +53,7 @@ export const registerMessage = async (req, res) => {
         }
 
         room.messages.push(newMessage._id);
+        room.lastUpdated = new Date().getTime();
 
         await Promise.all([newMessage.save(), room.save()]);
 
