@@ -1,11 +1,18 @@
 import { useRoom } from "../Context/RoomContext";
+import { useSidebarContext } from "../Context/SidebarContext";
 import { useSocketContext } from "../Context/SocketContext";
 import { UserSidebarInfo } from "../interfaces";
 
 const Room = ({ room, lastIndex }: UserSidebarInfo) => {
     const { selectedRoom, setSelectedRoom } = useRoom();
     const { onlineUsers } = useSocketContext();
+    const { sidebarOpen, setSidebarOpen } = useSidebarContext();
+
     const isSelected: boolean = selectedRoom?._id === room._id;
+
+    const handleRoomClick = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
 
     const selectedStyle: string = isSelected
         ? "bg-gray-500 scale-110"
@@ -20,6 +27,9 @@ const Room = ({ room, lastIndex }: UserSidebarInfo) => {
             className={className}
             onClick={() => {
                 setSelectedRoom(room);
+                if (sidebarOpen) {
+                    handleRoomClick();
+                }
             }}
         >
             <div className="flex flex-wrap gap-4 items-center rounded p-3 py-2 cursor-pointer">

@@ -7,18 +7,21 @@ import { AuthContextProvider } from "./Context/AuthContext.tsx";
 import { SearchBoxContextProvider } from "./Context/SearchBoxContext.tsx";
 import { SocketContextProvider } from "./Context/SocketContext.tsx";
 import { RoomContextProvider } from "./Context/RoomContext.tsx";
+import { SidebarContextProvider } from "./Context/SidebarContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <BrowserRouter>
             <AuthContextProvider>
-                <RoomContextProvider>
-                    <SocketContextProvider>
-                        <SearchBoxContextProvider>
-                            <App />
-                        </SearchBoxContextProvider>
-                    </SocketContextProvider>
-                </RoomContextProvider>
+                <SidebarContextProvider>
+                    <RoomContextProvider>
+                        <SocketContextProvider>
+                            <SearchBoxContextProvider>
+                                <App />
+                            </SearchBoxContextProvider>
+                        </SocketContextProvider>
+                    </RoomContextProvider>
+                </SidebarContextProvider>
             </AuthContextProvider>
         </BrowserRouter>
     </React.StrictMode>

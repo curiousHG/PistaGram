@@ -14,7 +14,7 @@ const Sidebar = () => {
                     <Rooms />
                 </div>
             </div>
-            <div className="h-10 my-2">
+            <div className="h-10 my-5">
                 <LogoutBtn />
             </div>
         </div>
