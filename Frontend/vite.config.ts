@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     copy({
       targets: [
-        { src: 'src/Assets', dest: 'public' },
+        { src: 'src/Assets', dest: 'dist' },
       ]
     }),
   ],
