@@ -11,8 +11,6 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
         senderId === sender._id
             ? sender.profilePicture
             : receiver.profilePicture;
-    const username =
-        senderId === sender._id ? sender.username : receiver.username;
 
     return (
         <div className={messageClassName}>

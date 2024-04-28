@@ -20,7 +20,7 @@ const MessageBody = () => {
     // Loading state of the page
     const [loading, setLoading] = useState(false);
 
-    const lastMessage = useRef();
+    const lastMessage = useRef<HTMLInputElement | null>(null);
 
     // For message body
     const [messages, setMessages] = useState(DEFAULT_MESSAGES);

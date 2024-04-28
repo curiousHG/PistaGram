@@ -1,4 +1,4 @@
-import React from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
@@ -10,7 +10,7 @@ import { RoomContextProvider } from "./Context/RoomContext.tsx";
 import { SidebarContextProvider } from "./Context/SidebarContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-    <React.StrictMode>
+    <StrictMode>
         <BrowserRouter>
             <AuthContextProvider>
                 <SidebarContextProvider>
@@ -24,5 +24,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 </SidebarContextProvider>
             </AuthContextProvider>
         </BrowserRouter>
-    </React.StrictMode>
+    </StrictMode>
 );

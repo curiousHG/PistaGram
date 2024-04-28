@@ -9,8 +9,11 @@ export const useAuthContext = () => {
 };
 
 export const AuthContextProvider = (props: any) => {
+    // @ts-ignore
+
+    const localStoreData = localStorage.getItem("auth-user");
     const [authUser, setAuthUser] = useState(
-        JSON.parse(localStorage.getItem("auth-user")) || null
+        localStoreData ? JSON.parse(localStoreData) : null
     );
     return (
         <AuthContext.Provider value={{ authUser, setAuthUser }}>
