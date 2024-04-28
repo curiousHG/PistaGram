@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { IMessage } from "../interfaces";
 import { useSocketContext } from "../Context/SocketContext";
-import newMessageRingtone from "../Assets/newMessageRingtone.mp3";
+// import newMessageRingtone from "../Assets/newMessageRingtone.mp3";
 
 const MessageBody = () => {
     const { authUser } = useAuthContext();
@@ -66,8 +66,8 @@ const MessageBody = () => {
     // When socket listens to the event populate the messages with new messages
     useEffect(() => {
         socket?.on("newMessage", (newMessage: IMessage) => {
-            const sound = new Audio(newMessageRingtone);
-            sound.play();
+            // const sound = new Audio(newMessageRingtone);
+            // sound.play();
             setMessages([...messages, newMessage]);
         });
 
