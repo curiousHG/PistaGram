@@ -14,7 +14,7 @@ export const SearchBoxContextProvider = (props: any) => {
 
     return (
         <SearchBoxContext.Provider value={{ searchBox, setSearchBox }}>
-            {props.children};
+            {props.children}
         </SearchBoxContext.Provider>
     );
 };
