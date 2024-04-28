@@ -12,6 +12,10 @@ body {
     margin: 0;
     padding: 0;
     height: 100vh;
+    background-image: url("./Assets/background.jpg");
+    background-size: "cover";
+    background-position: "center";
+    background-repeat: "repeat";
 }
 
 #root {
