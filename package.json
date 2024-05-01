@@ -5,8 +5,8 @@
   "description": "",
   "main": "Backend/server.js",
   "scripts": {
-    "dev": "nodemon ./Backend/server.js",
-    "build": "node ./Backend/server.js"
+    "devServer": "nodemon ./Backend/server.js",
+    "server": "node ./Backend/server.js"
   },
   "keywords": [],
   "author": "",
