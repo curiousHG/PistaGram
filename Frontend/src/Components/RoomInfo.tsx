@@ -40,30 +40,30 @@ const RoomInfo = () => {
                     </div>
                     <div className="flex gap-5 py-2 px-5">
                         <MdOutlineInfo size={60} className="cursor-pointer" />
-                        <p className="text-xl text-bold">
+                        <div className="text-xl text-bold">
                             <p> {selectedRoom.username} </p>
                             <p className="text-lg text-bolder"> User ID </p>
-                        </p>
+                        </div>
                     </div>
                     <div className="flex gap-5 py-2 px-5">
                         <MdOutlineAlternateEmail
                             size={60}
                             className="cursor-pointer"
                         />
-                        <p className="text-xl text-bold">
+                        <div className="text-xl text-bold">
                             <p> {selectedRoom.email} </p>
                             <p className="text-lg text-bolder"> Email </p>
-                        </p>
+                        </div>
                     </div>
                     <div className="flex gap-5 py-2 px-5">
                         <BsFillCalendarDateFill
                             size={60}
                             className="cursor-pointer"
                         />
-                        <p className="text-xl text-bold">
+                        <div className="text-xl text-bold">
                             <p> {convertCreatedAt(selectedRoom.createdAt)} </p>
                             <p className="text-lg text-bolder"> Created On </p>
-                        </p>
+                        </div>
                     </div>
                 </div>
             </div>
