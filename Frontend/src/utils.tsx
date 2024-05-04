@@ -9,6 +9,22 @@ export const format = (value: number): string => {
     }
 };
 
+const convertHours = (hours: number) => {
+    if (hours > 12) {
+        return hours - 12;
+    } else {
+        return hours;
+    }
+};
+
+const getHourPeriod = (hours: number) => {
+    if (hours > 12) {
+        return "PM";
+    } else {
+        return "AM";
+    }
+};
+
 export const convertCreatedAt = (timezone: string) => {
     const dateTime = new Date(timezone);
     return (
@@ -18,8 +34,10 @@ export const convertCreatedAt = (timezone: string) => {
         "/" +
         format(dateTime.getFullYear()) +
         " " +
-        format(dateTime.getHours()) +
+        convertHours(dateTime.getHours()) +
         ":" +
-        format(dateTime.getMinutes())
+        format(dateTime.getMinutes()) +
+        " " +
+        getHourPeriod(dateTime.getHours())
     );
 };
