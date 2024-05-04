@@ -3,9 +3,10 @@ import MessageBody from "./MessageBody.js";
 import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../Context/AuthContext.js";
 import { useRoomContext } from "../Context/RoomContext.js";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSidebarContext } from "../Context/SidebarContext.js";
 import { GiHamburgerMenu } from "react-icons/gi";
+import RoomInfo from "./RoomInfo.js";
 
 const MessageContainer = () => {
     const { authUser } = useAuthContext();
@@ -73,6 +74,7 @@ const MessageContainer = () => {
                     handleOutsideClick();
                 }}
             >
+                <RoomInfo />
                 <ReceiverInfo />
                 <MessageBody />
             </div>

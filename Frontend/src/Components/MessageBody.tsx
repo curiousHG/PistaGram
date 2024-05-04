@@ -54,7 +54,7 @@ const MessageBody = () => {
                 setLoading(false);
             }
         },
-        [selectedRoom]
+        [selectedRoom._id]
     );
 
     // Load messages in the room when selectedRoom is changed
@@ -66,11 +66,11 @@ const MessageBody = () => {
     useEffect(() => {
         setTimeout(() => {
             lastMessage.current?.scrollIntoView({
-                behavior: messages.length > 50 ? "instant" : "smooth",
+                behavior: messages.length > 5 ? "instant" : "smooth",
                 block: "start",
                 inline: "start",
             });
-        }, 50);
+        }, 500);
     }, [messages]);
 
     // When socket listens to the event populate the messages with new messages
