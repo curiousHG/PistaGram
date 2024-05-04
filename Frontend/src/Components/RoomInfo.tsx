@@ -11,8 +11,8 @@ const RoomInfo = () => {
     else {
         return (
             <div className="absolute inset-0 z-50 flex items-center justify-center backdrop-filter backdrop-blur-2xl">
-                <div className="h-full max-h-[300px] w-full max-w-[500px] bg-gray-800 rounded-2xl p-10 flex justify-between">
-                    <div className="text-xl font-bold">
+                <div className="h-full max-h-[500px] w-full max-w-[500px] bg-gray-800 rounded-2xl p-10 flex justify-end">
+                    <div className="mt-40 text-xl font-bold">
                         <h2 className="text-3xl font-bolder mb-4">
                             User Information
                         </h2>
@@ -43,7 +43,7 @@ const RoomInfo = () => {
                             setUserInfoPopup(false);
                         }}
                     >
-                        <CiSquareRemove size={35} />
+                        <CiSquareRemove size={45} />
                     </div>
                 </div>
             </div>
