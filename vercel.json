@@ -1,6 +1,0 @@
-{
-    "version": 2,
-    "name": "pistagram-server",
-    "builds": [{ "src" : ".Backend/*.js", "use" : "@vercel/node" }],
-    "routes": [ { "src" : "/(.*)", "dest" : "/"} ]
-}

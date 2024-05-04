@@ -4,7 +4,7 @@ import LogoutBtn from "./LogoutBtn";
 
 const Sidebar = () => {
     return (
-        <div className="flex flex-col justify-between gap-0 w-fullp-2">
+        <div className="flex flex-col justify-between gap-0 w-full p-2 h-full">
             <div className="h-full">
                 <div className="h-1/6">
                     <Searchbox />

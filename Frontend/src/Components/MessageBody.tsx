@@ -1,9 +1,9 @@
 import { IoSendSharp } from "react-icons/io5";
 import { useAuthContext } from "../Context/AuthContext";
-import { useRoom } from "../Context/RoomContext";
+import { useRoomContext } from "../Context/RoomContext";
 import Message from "./Message";
 import useSendMessage from "../Hooks/useSendMessage";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { IMessage } from "../interfaces";
 import { useSocketContext } from "../Context/SocketContext";
@@ -11,9 +11,11 @@ import newMessageRingtone from "../Assets/newMessageRingtone.mp3";
 
 const MessageBody = () => {
     const { authUser } = useAuthContext();
-    const { selectedRoom } = useRoom();
-    const { sendMessage } = useSendMessage();
+    const { selectedRoom } = useRoomContext();
     const { socket } = useSocketContext();
+
+    // Send message hook
+    const { sendMessage } = useSendMessage();
 
     const DEFAULT_MESSAGES: IMessage[] = [];
 
@@ -36,9 +38,8 @@ const MessageBody = () => {
         }
     };
 
-    // Load messages in the room when selectedRoom is changed
-    useEffect(() => {
-        const getMessages = async () => {
+    const getMessages = useMemo(
+        () => async () => {
             setLoading(true);
             try {
                 const res = await fetch(`/api/messages/${selectedRoom._id}`);
@@ -52,14 +53,23 @@ const MessageBody = () => {
             } finally {
                 setLoading(false);
             }
-        };
+        },
+        [selectedRoom]
+    );
+
+    // Load messages in the room when selectedRoom is changed
+    useEffect(() => {
         getMessages();
-    }, [selectedRoom]);
+    }, [getMessages]);
 
     // When messages is changed scroll to the bottom of it
     useEffect(() => {
         setTimeout(() => {
-            lastMessage.current?.scrollIntoView({ behavior: "smooth" });
+            lastMessage.current?.scrollIntoView({
+                behavior: messages.length > 50 ? "instant" : "smooth",
+                block: "start",
+                inline: "start",
+            });
         }, 50);
     }, [messages]);
 
@@ -72,7 +82,7 @@ const MessageBody = () => {
         });
 
         return () => socket?.off("newMessage");
-    }, [socket, setMessages, messages]);
+    }, [socket, messages, setMessages]);
 
     return (
         <div className="flex flex-col h-full justify-between px-4">
@@ -109,6 +119,8 @@ const MessageBody = () => {
                         onKeyDown={(e: any) => {
                             if (e.key === "Enter") {
                                 handleSendMessage();
+                            } else if (e.key === "Escape") {
+                                setMessage("");
                             }
                         }}
                     />

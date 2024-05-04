@@ -1,14 +1,16 @@
-import { useRoom } from "../Context/RoomContext";
+import { useRoomContext } from "../Context/RoomContext";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { useSidebarContext } from "../Context/SidebarContext";
 import { CiSquareRemove } from "react-icons/ci";
 
 const ReceiverInfo = () => {
-    const { selectedRoom, setSelectedRoom } = useRoom();
+    const { selectedRoom, setSelectedRoom } = useRoomContext();
     const { sidebarOpen, setSidebarOpen } = useSidebarContext();
 
     const handleHamburgerClick = () => {
-        setSidebarOpen(!sidebarOpen);
+        if (!sidebarOpen) {
+            setSidebarOpen(!sidebarOpen);
+        }
     };
 
     const handleClearIconClick = () => {
@@ -39,7 +41,7 @@ const ReceiverInfo = () => {
                 </p>
             </div>
             <div
-                className="hidden xs:block p-5 text-bolder"
+                className="p-5 text-bolder"
                 onClick={() => {
                     handleClearIconClick();
                 }}

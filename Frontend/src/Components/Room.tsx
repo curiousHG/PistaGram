@@ -1,10 +1,10 @@
-import { useRoom } from "../Context/RoomContext";
+import { useRoomContext } from "../Context/RoomContext";
 import { useSidebarContext } from "../Context/SidebarContext";
 import { useSocketContext } from "../Context/SocketContext";
 import { UserSidebarInfo } from "../interfaces";
 
 const Room = ({ room, lastIndex }: UserSidebarInfo) => {
-    const { selectedRoom, setSelectedRoom } = useRoom();
+    const { selectedRoom, setSelectedRoom } = useRoomContext();
     const { onlineUsers } = useSocketContext();
     const { sidebarOpen, setSidebarOpen } = useSidebarContext();
 

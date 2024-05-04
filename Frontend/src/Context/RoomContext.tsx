@@ -4,7 +4,7 @@ const DEFAULT_ROOM: any = null;
 
 export const RoomContext = createContext(DEFAULT_ROOM);
 
-export const useRoom = () => {
+export const useRoomContext = () => {
     return useContext(RoomContext);
 };
 

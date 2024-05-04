@@ -2,56 +2,49 @@ import ReceiverInfo from "./ReceiverInfo.js";
 import MessageBody from "./MessageBody.js";
 import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../Context/AuthContext.js";
-import { useRoom } from "../Context/RoomContext.js";
-import { useEffect, useState } from "react";
+import { useRoomContext } from "../Context/RoomContext.js";
+import { useEffect } from "react";
 import { useSidebarContext } from "../Context/SidebarContext.js";
 import { GiHamburgerMenu } from "react-icons/gi";
 
 const MessageContainer = () => {
     const { authUser } = useAuthContext();
     const { sidebarOpen, setSidebarOpen } = useSidebarContext();
-    const { selectedRoom, setSelectedRoom } = useRoom();
-    const [showBorder, setShowBorder] = useState(true);
+    const { selectedRoom, setSelectedRoom } = useRoomContext();
 
+    // Handlers
     const handleHamburgerClick = () => {
-        setSidebarOpen(!sidebarOpen);
+        if (!sidebarOpen) {
+            setSidebarOpen(true);
+        }
     };
 
     const handleOutsideClick = () => {
         if (sidebarOpen) {
-            setSidebarOpen(!sidebarOpen);
+            setSidebarOpen(false);
         }
     };
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setShowBorder(false);
-        }, 5000);
-
-        return () => clearTimeout(timer);
-    }, []);
-
-    useEffect(() => {
-        return () => setSelectedRoom(null);
-    }, [setSelectedRoom]);
+        return () => {
+            setSelectedRoom(null);
+            setSidebarOpen(false);
+        };
+    }, [setSelectedRoom, setSidebarOpen]);
 
     const DefaultViewJSX = () => {
         return (
             <div
-                className="w-full"
+                className="w-full p-2"
                 onClick={() => {
                     handleOutsideClick();
                 }}
             >
                 <div
-                    className={`relative ${
-                        showBorder ? "border-gradient" : ""
-                    }`}
+                    className="hidden xs:block p-5"
                     onClick={() => handleHamburgerClick()}
                 >
-                    <div className="hidden xs:block p-5">
-                        <GiHamburgerMenu size={30} />
-                    </div>
+                    <GiHamburgerMenu size={30} />
                 </div>
                 <div className="flex items-center justify-center w-full h-full">
                     <div className="px-4 text-center sm:text-lg md:text-xl text-gray-200 font-semibold flex flex-col items-center gap-2">
