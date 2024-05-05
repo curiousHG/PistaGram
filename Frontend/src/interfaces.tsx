@@ -52,3 +52,7 @@ export interface ISignup {
     email: string;
     password: string;
 }
+
+export interface IRoomsProps { 
+    category: string;
+}

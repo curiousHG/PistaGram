@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { useSearchBoxContext } from "../Context/SearchBoxContext";
 import useGetRooms from "../Hooks/useGetRooms";
 import Room from "./Room";
-import { useSidebarContext } from "../Context/SidebarContext";
+import { IRoomsProps } from "../interfaces";
 
-const Rooms = () => {
-    const { category } = useSidebarContext();
+const Rooms = ({ category }: IRoomsProps) => {
     const { searchBox } = useSearchBoxContext();
     const { loading, roomData } = useGetRooms(category);
     const [filteredRoomData, setFilteredRoomData] = useState(roomData);

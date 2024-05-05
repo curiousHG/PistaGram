@@ -38,8 +38,9 @@ export const getAllNonFriends = async (req, res) => {
         const loggedInUserId = req.user._id;
         const user = await User.findById(loggedInUserId).populate("friends");
         const friends = user.friends;
+        const friends_id = friends.map((friend) => friend._id);
 
-        const nonFriendUsers = await User.find({ _id: { $nin: friends._id } })
+        const nonFriendUsers = await User.find({ _id: { $nin: friends_id } })
             .find({ _id: { $ne: loggedInUserId } })
             .select("-password");
 
