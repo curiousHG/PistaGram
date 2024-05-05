@@ -36,7 +36,14 @@ const userSchema = new mongoose.Schema(
                 default: [],
             },
         ],
-        pendingFriendRequest: [
+        incomingFriendsReq: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+                default: [],
+            },
+        ],
+        outgoingFriendsReq: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User",
