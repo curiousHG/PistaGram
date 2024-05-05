@@ -4,14 +4,25 @@ import { IUser } from "../interfaces";
 
 const DEFAULT_ROOM_DATA: IUser[] = [];
 
-const useGetRooms = () => {
+const getAPIRoute = (category: String) => {
+    switch (category) {
+        case "all":
+            return "/api/users/all";
+        case "friends":
+            return `/api/users/friends`;
+        default:
+            return `/api/users/discover`;
+    }
+};
+
+const useGetRooms = (category: String) => {
     const [loading, setLoading] = useState(false);
     const [roomData, setRoomData] = useState(DEFAULT_ROOM_DATA);
 
     const getRoomData = async () => {
         setLoading(true);
         try {
-            const res = await fetch("/api/users");
+            const res = await fetch(getAPIRoute(category));
             const data = await res.json();
 
             if (data.error) {
@@ -27,7 +38,7 @@ const useGetRooms = () => {
 
     useEffect(() => {
         getRoomData();
-    }, []);
+    }, [category]);
 
     return { loading, roomData };
 };
