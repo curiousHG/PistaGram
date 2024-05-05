@@ -29,6 +29,20 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: "",
         },
+        friends: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+                default: [],
+            },
+        ],
+        pendingFriendRequest: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+                default: [],
+            },
+        ],
     },
     { timestamps: true }
 );
