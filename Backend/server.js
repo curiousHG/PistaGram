@@ -1,10 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
-import authenticationRouter from "./Routers/authenticationRouter.js";
+import authenticationRouter from "./Routers/Authentication.js";
 import connectMongoDB from "./Database-Drivers/connectMonogoDB.js";
-import messagingRouter from "./Routers/messagingRouter.js";
+import messagingRouter from "./Routers/Message.js";
 import cookieParser from "cookie-parser";
-import userRouter from "./Routers/userRouter.js";
+import userRouter from "./Routers/User.js";
 import { app, server } from "./socket.js";
 
 // Server Configs

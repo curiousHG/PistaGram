@@ -4,7 +4,7 @@ import {
     getAllFriends,
     getAllNonFriends,
     getAllUsers,
-} from "../Controllers/userController.js";
+} from "../Controllers/User.js";
 
 const userRouter = express.Router();
 
