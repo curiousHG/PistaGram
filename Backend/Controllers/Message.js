@@ -72,6 +72,44 @@ export const getMessages = async (req, res) => {
     }
 };
 
+export const editMessage = async (req, res) => {
+    try {
+        const { id: messageId } = req.params;
+        const senderId = req.user._id;
+        const { newMessage } = req.body;
+
+        const message = await Message.findById(messageId);
+        if (!message) {
+            throw new Error("Message does not exists!");
+        }
+
+        const messageSenderId = message.senderId;
+        if (messageSenderId.equals(senderId)) {
+            const prevMessage = await Message.findByIdAndUpdate(
+                messageId,
+                {
+                    message: newMessage,
+                },
+                { new: true }
+            );
+            if (!prevMessage) {
+                throw new Error(
+                    "Message was not found in database please refresh and try again!"
+                );
+            }
+
+            return res.status(200).json(prevMessage);
+        } else {
+            throw new Error("Message does not belongs to the current user!!");
+        }
+    } catch (error) {
+        console.log("Error in Edit Message Controller: ", error.message);
+        res.status(500).json({
+            error: "Server Error: Internal error occurred during message editing!",
+        });
+    }
+};
+
 export const deleteMessage = async (req, res) => {
     try {
         const { id: messageId } = req.params;
@@ -88,7 +126,7 @@ export const deleteMessage = async (req, res) => {
                 senderId: senderId,
             });
 
-            if (deleteMessage) return res.status(200).json(deletedMessage);
+            if (deletedMessage) return res.status(200).json(deletedMessage);
             else {
                 throw new Error(
                     "Message not found in database! Refresh the page.."
