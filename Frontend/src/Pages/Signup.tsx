@@ -1,10 +1,10 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import useSignup from "../Hooks/useSignup";
 import { emailValidationHandler } from "../utils";
+import useAuth from "../Hooks/useAuth";
 
 const SignUp = () => {
-    const { loading, signup } = useSignup();
+    const { loading, signup } = useAuth();
 
     const [formData, setFormData] = useState({
         firstname: "",

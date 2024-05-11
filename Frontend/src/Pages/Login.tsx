@@ -1,6 +1,6 @@
 import { useState } from "react";
-import useLogin from "../Hooks/useLogin";
 import toast from "react-hot-toast";
+import useAuth from "../Hooks/useAuth";
 
 const Login = () => {
     const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ const Login = () => {
         username: "",
         password: "",
     });
-    const { loading, login } = useLogin();
+    const { loading, login } = useAuth();
 
     const handleSubmitFormHandler = async (e: any) => {
         e.preventDefault();

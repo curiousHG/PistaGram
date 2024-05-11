@@ -2,12 +2,12 @@ import { IoSendSharp } from "react-icons/io5";
 import { useAuthContext } from "../Context/AuthContext";
 import { useRoomContext } from "../Context/RoomContext";
 import Message from "./Message";
-import useSendMessage from "../Hooks/useSendMessage";
 import { useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { IMessage } from "../interfaces";
 import { useSocketContext } from "../Context/SocketContext";
 import newMessageRingtone from "../Assets/newMessageRingtone.mp3";
+import useMessage from "../Hooks/useMessage";
 
 const MessageBody = () => {
     const { authUser } = useAuthContext();
@@ -15,7 +15,7 @@ const MessageBody = () => {
     const { socket } = useSocketContext();
 
     // Send message hook
-    const { sendMessage } = useSendMessage();
+    const { sendMessage } = useMessage();
 
     const DEFAULT_MESSAGES: IMessage[] = [];
 

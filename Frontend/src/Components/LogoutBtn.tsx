@@ -1,7 +1,7 @@
-import useLogout from "../Hooks/useLogout";
+import useAuth from "../Hooks/useAuth";
 
 const LogoutBtn = () => {
-    const { loading, logout } = useLogout();
+    const { loading, logout } = useAuth();
 
     const logoutHandler = async () => {
         await logout();
