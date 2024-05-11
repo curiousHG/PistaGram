@@ -53,6 +53,6 @@ export interface ISignup {
     password: string;
 }
 
-export interface IRoomsProps { 
+export interface IRoomsProps {
     category: string;
 }
