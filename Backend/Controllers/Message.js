@@ -85,20 +85,27 @@ export const editMessage = async (req, res) => {
 
         const messageSenderId = message.senderId;
         if (messageSenderId.equals(senderId)) {
-            const prevMessage = await Message.findByIdAndUpdate(
+            const changedMessage = await Message.findByIdAndUpdate(
                 messageId,
                 {
                     message: newMessage,
                 },
                 { new: true }
             );
-            if (!prevMessage) {
+            if (!changedMessage) {
                 throw new Error(
                     "Message was not found in database please refresh and try again!"
                 );
             }
 
-            return res.status(200).json(prevMessage);
+            const receiverId = message.receiverId;
+
+            const receiverSocketId = getReceiverSocketId(receiverId);
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit("editMessage", changedMessage);
+            }
+
+            return res.status(200).json(changedMessage);
         } else {
             throw new Error("Message does not belongs to the current user!!");
         }
@@ -125,6 +132,13 @@ export const deleteMessage = async (req, res) => {
             const deletedMessage = await Message.findOneAndDelete({
                 senderId: senderId,
             });
+
+            const receiverId = message.receiverId;
+
+            const receiverSocketId = getReceiverSocketId(receiverId);
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit("deleteMessage", deletedMessage);
+            }
 
             if (deletedMessage) return res.status(200).json(deletedMessage);
             else {

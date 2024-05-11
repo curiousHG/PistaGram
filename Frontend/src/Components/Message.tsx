@@ -1,14 +1,17 @@
-import { IMessageProps } from "../interfaces";
+import { IMessage, IMessageProps } from "../interfaces";
 import { convertCreatedAt } from "../utils";
 import { MdOutlineDelete } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { VscCheck, VscClose } from "react-icons/vsc";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useMessage from "../Hooks/useMessage";
+import { useSocketContext } from "../Context/SocketContext";
 
 const Message = ({ sender, receiver, message }: IMessageProps) => {
     const [editing, setEditing] = useState(false);
     const [deleted, setDeleted] = useState(false);
+
+    const { socket } = useSocketContext();
 
     const [messageVar, setMessageVar] = useState(message.message);
     const { loading, deleteMessage, editMessage } = useMessage();
@@ -50,6 +53,25 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
             setDeleted(true);
         }
     };
+
+    useEffect(() => {
+        socket?.on("deleteMessage", (deletedMessage: IMessage) => {
+            if (deletedMessage._id === message._id) {
+                setDeleted(true);
+            }
+        });
+
+        return () => socket?.off("deleteMessage");
+    }, [socket, message._id]);
+
+    useEffect(() => {
+        socket?.on("editMessage", (changedMessage: IMessage) => {
+            if (changedMessage._id === message._id) {
+                setMessageVar(changedMessage.message);
+            }
+        });
+        return () => socket?.off("editMessage");
+    }, [socket, message._id]);
 
     return (
         <div className={messageClassName}>
