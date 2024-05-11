@@ -15,7 +15,7 @@ const getAPIRoute = (category: String) => {
     }
 };
 
-const useGetRooms = (category: String) => {
+const useRooms = (category: String) => {
     const [loading, setLoading] = useState(false);
     const [roomData, setRoomData] = useState(DEFAULT_ROOM_DATA);
 
@@ -43,4 +43,4 @@ const useGetRooms = (category: String) => {
     return { loading, roomData };
 };
 
-export default useGetRooms;
+export default useRooms;
