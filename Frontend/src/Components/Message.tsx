@@ -103,7 +103,7 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
                     className="text-md p-2 rounded-lg bg-gray-800 text-white hover:scale-110"
                     onClick={() => handleSecondBtnClick()}
                 >
-                    {editing ? <VscClose /> : <MdOutlineDelete />}
+                    {editing ? <VscClose /> : <MdOutlineDelete size={16} />}
                 </button>
             </div>
         </div>
