@@ -78,20 +78,30 @@ export const deleteMessage = async (req, res) => {
         const senderId = req.user._id;
 
         const message = await Message.findById(messageId);
+        if (!message) {
+            throw new Error("Message does not exists!");
+        }
 
-        if (message.senderId !== senderId) {
-            throw new Error("Message does not belongs to the current user!!");
-        } else {
+        const messageSenderId = message.senderId;
+        if (messageSenderId.equals(senderId)) {
             const deletedMessage = await Message.findOneAndDelete({
-                _id: senderId,
+                senderId: senderId,
             });
 
-            return res.status(200).json(deleteMessage);
+            if (deleteMessage) return res.status(200).json(deletedMessage);
+            else {
+                throw new Error(
+                    "Message not found in database! Refresh the page.."
+                );
+            }
+        } else {
+            throw new Error("Message does not belongs to the current user!!");
         }
     } catch (error) {
         console.log("Error in Delete Message Controller: ", error.message);
         res.status(500).json({
             error: "Server: Error Internal error occurred during message deletion!",
+            message: error.message,
         });
     }
 };

@@ -17,7 +17,7 @@ export const signup = async (req, res) => {
 
         if (user) {
             return res.status(400).json({
-                error: `User with username- ${username} and email- ${email} already exists! Either Login or choose a different field`,
+                error: `User with username- ${username} and email- ${email} already exists! Login directly!`,
             });
         }
 
