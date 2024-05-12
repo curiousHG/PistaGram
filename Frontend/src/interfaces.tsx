@@ -34,6 +34,7 @@ export interface IMessageProps {
 export interface UserSidebarInfo {
     room: IUser;
     lastIndex: boolean;
+    category: string;
 }
 
 export interface ILogin {

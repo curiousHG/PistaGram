@@ -6,14 +6,10 @@ export const acceptRequest = async (req, res) => {
         const { id: senderId } = req.params;
         const receiverId = req.user._id;
 
-        console.log(receiverId);
-        console.log(senderId);
-
         const request = await Request.findOne({
             senderId: senderId,
             receiverId: receiverId,
         });
-        console.log(request);
 
         if (request) {
             const receiver = await User.findById(receiverId);
@@ -75,9 +71,77 @@ export const acceptRequest = async (req, res) => {
     }
 };
 
+export const rejectRequest = async (req, res) => {
+    try {
+        const { id: senderId } = req.params;
+        const receiverId = req.user._id;
+
+        const request = await Request.findOne({
+            senderId: senderId,
+            receiverId: receiverId,
+        });
+
+        if (request) {
+            const receiver = await User.findById(receiverId);
+            if (receiver) {
+                const sender = await User.findById(senderId);
+
+                if (sender) {
+                    // Remove requestId from receiver incoming requests
+                    const filteredIncomingReq =
+                        receiver.incomingFriendsReq.filter(
+                            (id) => !id.equals(request._id)
+                        );
+
+                    receiver.incomingFriendsReq = filteredIncomingReq;
+                    // Remove requestId from sender outgoing requests
+
+                    const filteredOutgoingReq =
+                        sender.outgoingFriendsReq.filter(
+                            (id) => !id.equals(request._id)
+                        );
+
+                    sender.outgoingFriendsReq = filteredOutgoingReq;
+
+                    const deletedRequest = await Request.deleteOne({
+                        senderId: senderId,
+                        receiverId: receiverId,
+                    });
+
+                    if (deletedRequest.acknowledged) {
+                        Promise.all([sender.save(), receiver.save()]);
+
+                        res.status(201).json({
+                            requestAccepted: true,
+                        });
+                    } else {
+                        throw new Error(
+                            "Request cannot be deleted from database!"
+                        );
+                    }
+                } else {
+                    throw new Error("Sender was not found in database!");
+                }
+            } else {
+                throw new Error("Receiver was not found in database!");
+            }
+        } else {
+            throw new Error("No request found for receiver");
+        }
+    } catch (error) {
+        console.log(
+            "Error occurred during removing friend request!",
+            error.message
+        );
+        throw new Error({
+            error: "Error occurred during removing friend request!",
+        });
+    }
+};
+
 export const removeFriend = async (req, res) => {
     try {
-        const friendId = req.params;
+        const { id: friendId } = req.params;
         const userId = req.user._id;
 
         const user = await User.findById(userId);
@@ -86,7 +150,7 @@ export const removeFriend = async (req, res) => {
         if (user) {
             if (friend) {
                 const filteredUsersFriend = user.friends.filter(
-                    (id) => !id.equals(receiverId)
+                    (id) => !id.equals(friendId)
                 );
                 user.friends = filteredUsersFriend;
 

@@ -27,12 +27,7 @@ export const getAllFriends = async (req, res) => {
     try {
         const loggedInUserId = req.user._id;
         const user = await User.findById(loggedInUserId).populate("friends");
-        const friends = user.friends
-            .select("-password")
-            .select("-incomingFriendsReq")
-            .select("-outgoingFriendsReq")
-            .select("-__v")
-            .select("-friends");
+        const friends = user.friends;
 
         return res.status(200).json(friends);
     } catch (error) {
