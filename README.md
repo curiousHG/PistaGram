@@ -7,7 +7,7 @@ Create a mongodb project and enter the following environment variables.
 6. JWT_SECRET_KEY=<secret-key>
 
 After this to run the server-
-1. Go in the root folder and run npm i then run npm run start-server
+1. Go in the root folder and run npm i then run npm run devServer
 
 When the server is up and running to run the frontend-
 1. Go in the frontend folder and run npm i then npm run dev.

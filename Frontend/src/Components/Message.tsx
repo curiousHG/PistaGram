@@ -1,11 +1,12 @@
 import { IMessage, IMessageProps } from "../interfaces";
 import { convertCreatedAt } from "../utils";
-import { MdOutlineDelete } from "react-icons/md";
+import { MdOutlineDelete, MdArrowDropDownCircle } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { VscCheck, VscClose } from "react-icons/vsc";
 import { useEffect, useState } from "react";
 import useMessage from "../Hooks/useMessage";
 import { useSocketContext } from "../Context/SocketContext";
+import { set } from "mongoose";
 
 const Message = ({ sender, receiver, message }: IMessageProps) => {
     const [editing, setEditing] = useState(false);
@@ -15,6 +16,7 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
 
     const [messageVar, setMessageVar] = useState(message.message);
     const { loading, deleteMessage, editMessage } = useMessage();
+    const [ dropDownButtonVisible, setDropDownButtonVisible ] = useState(false);
 
     const senderId = message.senderId;
 
@@ -73,8 +75,13 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
         return () => socket?.off("editMessage");
     }, [socket, message._id]);
 
+
+
     return (
-        <div className={messageClassName}>
+        <div className={messageClassName}
+            onMouseEnter={() => {setDropDownButtonVisible(true)}} 
+            onMouseLeave={() => {setDropDownButtonVisible(false)}}
+        >
             <div className="chat-image avatar">
                 <div className="w-10 rounded-full cursor-pointer">
                     <img alt="User Avatar Here!!" src={profilePicture} />
@@ -85,7 +92,8 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
                     {convertCreatedAt(message.createdAt)}
                 </time>
             </div>
-            <div className="chat-bubble text-md hover:scale-110 hover:opacity-100 relative">
+            
+            <div className="chat-bubble text-md hover:scale-110 hover:opacity-100 relative border-2 border-gray-800 " >
                 {editing ? (
                     loading ? (
                         <span className="text-center loading loading-spinner loading-xl"></span>
@@ -107,26 +115,28 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
                 ) : loading ? (
                     <span className="text-center loading loading-spinner loading-xl"></span>
                 ) : (
-                    <span>{messageVar}</span>
+                    <span className="relative z-0">{messageVar}</span>
                 )}
+                
             </div>
-            <div
-                className={`${btnClassName} chat-footer opacity-100 flex space-x-2 justify-center items-center pt-1`}
-            >
-                <button
-                    className="text-md p-2 rounded-lg bg-gray-800 text-white hover:scale-110"
-                    onClick={() => {
-                        handleFirstBtnClick();
-                    }}
-                >
-                    {editing ? <VscCheck /> : <FiEdit />}
-                </button>
-                <button
-                    className="text-md p-2 rounded-lg bg-gray-800 text-white hover:scale-110"
-                    onClick={() => handleSecondBtnClick()}
-                >
-                    {editing ? <VscClose /> : <MdOutlineDelete size={16} />}
-                </button>
+            <div className={`dropdown z-10 top-[-30px] ${dropDownButtonVisible ? 'opacity-100' : 'opacity-0'} ${btnClassName} border-1 border-cyan-50`}>
+                <div tabIndex={0} role="button" className="">
+                    <MdArrowDropDownCircle size={20} />
+                </div>
+                <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
+                    <li>
+                        <button className="text-md rounded-lg bg-gray-800 text-white hover:scale-110"
+                            onClick={() => handleFirstBtnClick()} >
+                            {editing ? <VscCheck /> : <FiEdit />}
+                        </button>
+                    </li>
+                    <li>
+                        <button className="text-md rounded-lg bg-gray-800 text-white hover:scale-110"
+                            onClick={() => handleSecondBtnClick()} >
+                            {editing ? <VscClose /> : <MdOutlineDelete size={16} />}
+                        </button>
+                    </li>
+                </ul>
             </div>
         </div>
     );
