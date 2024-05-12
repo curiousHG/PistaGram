@@ -11,6 +11,7 @@ import useRequest from "../Hooks/useRequest";
 import { useEffect, useState } from "react";
 import { FaUserClock } from "react-icons/fa6";
 import toast from "react-hot-toast";
+import useFriends from "../Hooks/useFriends";
 
 const RoomInfo = () => {
     const { selectedRoom } = useRoomContext();
@@ -19,6 +20,8 @@ const RoomInfo = () => {
     const { loading, getRequestStatus, sendRequest, deleteRequest } =
         useRequest();
 
+    const { removeFriend } = useFriends();
+
     useEffect(() => {
         (async () => {
             const status = await getRequestStatus();
@@ -26,7 +29,7 @@ const RoomInfo = () => {
         })();
     }, []);
 
-    const addFriend = async () => {
+    const handleAddFriend = async () => {
         const requestStatus = await sendRequest();
         if (requestStatus) {
             toast.success("Request sent sucessfully!!");
@@ -36,7 +39,7 @@ const RoomInfo = () => {
         }
     };
 
-    const removeRequest = async () => {
+    const handleRemoveRequest = async () => {
         const requestRemoved = await deleteRequest();
         if (requestRemoved) {
             toast.success("Request removed sucessfully!!");
@@ -46,9 +49,14 @@ const RoomInfo = () => {
         }
     };
 
-    const removeFriend = () => {
-        console.log("Friend removed");
-        setFriendStatus("Not Friends");
+    const handleRemoveFriend = async () => {
+        const friendRemoved = await removeFriend();
+        if (friendRemoved) {
+            toast.success("Friend Removed successfully!");
+            setFriendStatus("Not Friends");
+        } else {
+            toast.error("Cannot remove friend!");
+        }
     };
 
     if (!userInfoPopup) return;
@@ -86,20 +94,20 @@ const RoomInfo = () => {
                                 ) : friendStatus === "Not Friends" ? (
                                     <MdOutlineGroupAdd
                                         size={35}
-                                        onClick={() => addFriend()}
+                                        onClick={() => handleAddFriend()}
                                     />
                                 ) : friendStatus === "Pending" ? (
                                     <FaUserClock
                                         size={35}
                                         onClick={() => {
-                                            removeRequest();
+                                            handleRemoveRequest();
                                         }}
                                     />
                                 ) : (
                                     <MdGroupRemove
                                         size={35}
                                         onClick={() => {
-                                            removeFriend();
+                                            handleRemoveFriend();
                                         }}
                                     />
                                 )}

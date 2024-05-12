@@ -33,6 +33,7 @@ const Rooms = ({ category }: IRoomsProps) => {
                         key={room._id}
                         room={room}
                         lastIndex={index === roomData.length - 1}
+                        category={category}
                     />
                 ))
             )}

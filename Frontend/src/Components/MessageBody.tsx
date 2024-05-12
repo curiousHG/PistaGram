@@ -87,8 +87,8 @@ const MessageBody = () => {
     return (
         <div className="flex flex-col h-full justify-between px-4">
             <div
-                style={{ height: "100%", maxHeight: "500px" }}
-                className="overflow-auto px-2 mt-3"
+                style={{ height: "100%", maxHeight: "600px" }}
+                className="overflow-auto px-2 my-3"
             >
                 {loading ? (
                     <span className="loading loading-spinner"></span>
