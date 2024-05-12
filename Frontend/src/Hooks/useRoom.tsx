@@ -6,16 +6,16 @@ const DEFAULT_ROOM_DATA: IUser[] = [];
 
 const getAPIRoute = (category: String) => {
     switch (category) {
-        case "all":
-            return "/api/users/all";
+        case "discover":
+            return "/api/users/discover";
         case "friends":
             return `/api/users/friends`;
         default:
-            return `/api/users/discover`;
+            return `/api/users/pending`;
     }
 };
 
-const useGetRooms = (category: String) => {
+const useRooms = (category: String) => {
     const [loading, setLoading] = useState(false);
     const [roomData, setRoomData] = useState(DEFAULT_ROOM_DATA);
 
@@ -43,4 +43,4 @@ const useGetRooms = (category: String) => {
     return { loading, roomData };
 };
 
-export default useGetRooms;
+export default useRooms;

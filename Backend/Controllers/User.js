@@ -1,11 +1,16 @@
+import Request from "../Models/Request.js";
 import User from "../Models/User.js";
 
 export const getAllUsers = async (req, res) => {
     try {
         const loggedInUserId = req.user._id;
-        const users = await User.find({ _id: { $ne: loggedInUserId } }).select(
-            "-password"
-        );
+        const users = await User.find({ _id: { $ne: loggedInUserId } })
+            .select("-password")
+            .select("-incomingFriendsReq")
+            .select("-outgoingFriendsReq")
+            .select("-__v")
+            .select("-friends");
+
         if (!users) {
             return res.status(200).json([]);
         }
@@ -22,7 +27,12 @@ export const getAllFriends = async (req, res) => {
     try {
         const loggedInUserId = req.user._id;
         const user = await User.findById(loggedInUserId).populate("friends");
-        const friends = user.friends;
+        const friends = user.friends
+            .select("-password")
+            .select("-incomingFriendsReq")
+            .select("-outgoingFriendsReq")
+            .select("-__v")
+            .select("-friends");
 
         return res.status(200).json(friends);
     } catch (error) {
@@ -42,13 +52,47 @@ export const getAllNonFriends = async (req, res) => {
 
         const nonFriendUsers = await User.find({ _id: { $nin: friends_id } })
             .find({ _id: { $ne: loggedInUserId } })
-            .select("-password");
+            .select("-password")
+            .select("-incomingFriendsReq")
+            .select("-outgoingFriendsReq")
+            .select("-__v")
+            .select("-friends");
 
         return res.status(200).json(nonFriendUsers);
     } catch (error) {
         console.log("Error in Get All Non Friends Controller: ", error.message);
         res.status(500).json({
             error: "Server Error: Internal error occurred during getting users!",
+        });
+    }
+};
+
+export const getPendingReqUsers = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId).populate("incomingFriendsReq");
+
+        const incomingReqUsersId = user.incomingFriendsReq.map(
+            (request) => request.senderId
+        );
+
+        const incomingReqUsers = await User.find({
+            _id: { $in: incomingReqUsersId },
+        })
+            .select("-password")
+            .select("-incomingFriendsReq")
+            .select("-outgoingFriendsReq")
+            .select("-__v")
+            .select("-friends");
+
+        res.status(200).json(incomingReqUsers);
+    } catch (error) {
+        console.log(
+            "Error occurred during getting pending request users",
+            error.message
+        );
+        throw new Error({
+            error: "Error occurred during getting pending request users!",
         });
     }
 };

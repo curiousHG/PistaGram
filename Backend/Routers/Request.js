@@ -1,13 +1,15 @@
 import express from "express";
 import secureRoute from "../Middleware/secureRoute.js";
 import {
-    deleteFriendReq,
-    sendFriendReq,
-} from "../Controllers/friendReqController.js";
+    deleteReq,
+    getRequestStatus,
+    sendRequest,
+} from "../Controllers/Request.js";
 
-const friendsRouter = express.Router();
+const requestRouter = express.Router();
 
-friendsRouter.post("/sendReq/:id", secureRoute, sendFriendReq);
-friendsRouter.post("/deleteReq/:id", secureRoute, deleteFriendReq);
+requestRouter.get("/status/:id", secureRoute, getRequestStatus);
+requestRouter.post("/:id", secureRoute, sendRequest);
+requestRouter.delete("/:id", secureRoute, deleteReq);
 
-export default friendsRouter;
+export default requestRouter;
