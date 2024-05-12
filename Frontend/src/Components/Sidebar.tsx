@@ -5,10 +5,6 @@ import { useState } from "react";
 
 export const BUTTON_DATA = [
     {
-        value: "all",
-        name: "All",
-    },
-    {
         value: "friends",
         name: "Friends",
     },
@@ -16,10 +12,14 @@ export const BUTTON_DATA = [
         value: "discover",
         name: "Discover",
     },
+    {
+        value: "pending",
+        name: "Pending",
+    },
 ];
 
 const Sidebar = () => {
-    const [category, setCategory] = useState("all");
+    const [category, setCategory] = useState("friends");
 
     const handleButtonClick = (button: any) => {
         setCategory(button.value);

@@ -6,12 +6,12 @@ const DEFAULT_ROOM_DATA: IUser[] = [];
 
 const getAPIRoute = (category: String) => {
     switch (category) {
-        case "all":
-            return "/api/users/all";
+        case "discover":
+            return "/api/users/discover";
         case "friends":
             return `/api/users/friends`;
         default:
-            return `/api/users/discover`;
+            return `/api/users/pending`;
     }
 };
 

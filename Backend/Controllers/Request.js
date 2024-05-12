@@ -1,5 +1,5 @@
-import Request from "../Models/Request";
-import User from "../Models/User";
+import Request from "../Models/Request.js";
+import User from "../Models/User.js";
 
 export const sendRequest = async (req, res) => {
     try {
@@ -43,14 +43,10 @@ export const sendRequest = async (req, res) => {
                 ]);
 
                 res.status(201).json({
-                    _id: newRequest._id,
-                    senderId: newRequest.senderId,
-                    receiverId: newRequest.receiverId,
+                    requestSent: true,
                 });
             } else {
-                throw new Error(
-                    "Request model object was not created! Try again"
-                );
+                throw new Error("Cannot send request please try again!");
             }
         }
     } catch (error) {
@@ -85,18 +81,29 @@ export const deleteReq = async (req, res) => {
 
         if (request) {
             const sendersOutReq = sender.outgoingFriendsReq.filter(
-                (requestId) => requestId !== request._id
+                (id) => !id.equals(request._id)
             );
             const receiversInReq = receiver.incomingFriendsReq.filter(
-                (requestId) => requestId !== request._id
+                (id) => !id.equals(request._id)
             );
 
             sender.outgoingFriendsReq = sendersOutReq;
             receiver.incomingFriendsReq = receiversInReq;
 
-            const deletedReq = await Request.findByIdAndDelete(request._id);
-            Promise.all(sender.save(), receiver.save(), request.save());
-            res.status(200).json(deletedReq);
+            const deletedReq = await Request.deleteOne({
+                senderId: senderId,
+                receiverId: receiverId,
+            });
+            Promise.all([sender.save(), receiver.save()]);
+            if (deletedReq.acknowledged) {
+                res.status(200).json({
+                    requestRemoved: true,
+                });
+            } else {
+                res.status(200).json({
+                    requestRemoved: false,
+                });
+            }
         } else {
             throw Error("Request between users not found!!");
         }
@@ -105,5 +112,50 @@ export const deleteReq = async (req, res) => {
         res.status(500).json({
             error: "Server Error: Internal error occurred during deleting request!",
         });
+    }
+};
+
+export const getRequestStatus = async (req, res) => {
+    try {
+        const { id: receiverId } = req.params;
+        const userId = req.user._id;
+        const user = await User.findById(userId);
+
+        if (user) {
+            const friends = user.friends;
+            const acceptedReceiversId = friends.find((id) =>
+                id.equals(receiverId)
+            );
+            if (acceptedReceiversId) {
+                res.status(200).json({
+                    relStatus: "Friends",
+                });
+            } else {
+                const request =
+                    (await Request.findOne({
+                        senderId: userId,
+                        receiverId: receiverId,
+                    })) ||
+                    (await Request.findOne({
+                        senderId: receiverId,
+                        receiverId: userId,
+                    }));
+
+                if (request) {
+                    res.status(200).json({
+                        relStatus: "Pending",
+                    });
+                } else {
+                    res.status(200).json({
+                        relStatus: "Not Friends",
+                    });
+                }
+            }
+        } else {
+            throw new Error("User not found in Db!");
+        }
+    } catch (error) {
+        console.log("Error occurred during status request!");
+        throw new Error("Error occurred during status", error.message);
     }
 };

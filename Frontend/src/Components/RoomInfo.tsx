@@ -1,4 +1,3 @@
-import React from "react";
 import { useRoomContext } from "../Context/RoomContext";
 import { useUserInfoContext } from "../Context/UserInfoPopupContext";
 import { convertCreatedAt } from "../utils";
@@ -6,10 +5,52 @@ import { CiSquareRemove } from "react-icons/ci";
 import { MdOutlineInfo } from "react-icons/md";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { BsFillCalendarDateFill } from "react-icons/bs";
+import { MdOutlineGroupAdd } from "react-icons/md";
+import { MdGroupRemove } from "react-icons/md";
+import useRequest from "../Hooks/useRequest";
+import { useEffect, useState } from "react";
+import { FaUserClock } from "react-icons/fa6";
+import toast from "react-hot-toast";
 
 const RoomInfo = () => {
     const { selectedRoom } = useRoomContext();
     const { userInfoPopup, setUserInfoPopup } = useUserInfoContext();
+    const [friendStatus, setFriendStatus] = useState("Not Friends");
+    const { loading, getRequestStatus, sendRequest, deleteRequest } =
+        useRequest();
+
+    useEffect(() => {
+        (async () => {
+            const status = await getRequestStatus();
+            setFriendStatus(status);
+        })();
+    }, []);
+
+    const addFriend = async () => {
+        const requestStatus = await sendRequest();
+        if (requestStatus) {
+            toast.success("Request sent sucessfully!!");
+            setFriendStatus("Pending");
+        } else {
+            toast.error("Cannot send friend request!");
+        }
+    };
+
+    const removeRequest = async () => {
+        const requestRemoved = await deleteRequest();
+        if (requestRemoved) {
+            toast.success("Request removed sucessfully!!");
+            setFriendStatus("Not Friends");
+        } else {
+            toast.error("Cannot remove request!");
+        }
+    };
+
+    const removeFriend = () => {
+        console.log("Friend removed");
+        setFriendStatus("Not Friends");
+    };
+
     if (!userInfoPopup) return;
     else {
         return (
@@ -27,14 +68,41 @@ const RoomInfo = () => {
                                 <CiSquareRemove size={50} />
                             </div>
                         </div>
-                        <div className="w-full flex gap-4 items-center">
-                            <img
-                                className="w-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 cursor-pointer"
-                                src={selectedRoom.profilePicture}
-                                alt="Avatar for user"
-                            />
-                            <p className="text-bolder">
-                                {selectedRoom.firstname} {selectedRoom.lastname}
+                        <div className="w-full flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <img
+                                    className="w-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 cursor-pointer"
+                                    src={selectedRoom.profilePicture}
+                                    alt="Avatar for user"
+                                />
+                                <p className="text-lg text-bolder">
+                                    {selectedRoom.firstname}{" "}
+                                    {selectedRoom.lastname}
+                                </p>
+                            </div>
+                            <p className="p-3 cursor-pointer rounded-full hover:bg-gray-500 hover:scale-110">
+                                {loading ? (
+                                    <span className="text-center loading loading-spinner loading-xl"></span>
+                                ) : friendStatus === "Not Friends" ? (
+                                    <MdOutlineGroupAdd
+                                        size={35}
+                                        onClick={() => addFriend()}
+                                    />
+                                ) : friendStatus === "Pending" ? (
+                                    <FaUserClock
+                                        size={35}
+                                        onClick={() => {
+                                            removeRequest();
+                                        }}
+                                    />
+                                ) : (
+                                    <MdGroupRemove
+                                        size={35}
+                                        onClick={() => {
+                                            removeFriend();
+                                        }}
+                                    />
+                                )}
                             </p>
                         </div>
                     </div>

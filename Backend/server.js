@@ -6,6 +6,8 @@ import messagingRouter from "./Routers/Message.js";
 import cookieParser from "cookie-parser";
 import userRouter from "./Routers/User.js";
 import { app, server } from "./socket.js";
+import requestRouter from "./Routers/Request.js";
+import friendsRouter from "./Routers/Friends.js";
 
 // Server Configs
 dotenv.config();
@@ -21,6 +23,8 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authenticationRouter);
 app.use("/api/users", userRouter);
 app.use("/api/messages", messagingRouter);
+app.use("/api/request", requestRouter);
+app.use("/api/friends", friendsRouter);
 
 // Start Server on default PORT
 server.listen(PORT, async () => {
