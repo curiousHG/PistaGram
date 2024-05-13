@@ -27,6 +27,10 @@ const Rooms = ({ category }: IRoomsProps) => {
         <div className="overflow-x-hidden mt-3">
             {loading ? (
                 <span className="text-center loading loading-spinner loading-xl"></span>
+            ) : filteredRoomData.length === 0 ? (
+                <div className="text-xl text-bolder text-center">
+                    No room in this category!
+                </div>
             ) : (
                 filteredRoomData.map((room, index) => (
                     <Room
