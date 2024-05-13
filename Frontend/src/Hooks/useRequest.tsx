@@ -1,16 +1,15 @@
 import { useState } from "react";
-import { useRoomContext } from "../Context/RoomContext";
 import toast from "react-hot-toast";
+import { IUser } from "../interfaces";
 
 const useRequest = () => {
     const [loading, setLoading] = useState(false);
-    const { selectedRoom } = useRoomContext();
 
-    const getRequestStatus = async () => {
+    const getRequestStatus = async (room: IUser) => {
         setLoading(true);
 
         try {
-            const res = await fetch(`/api/request/status/${selectedRoom._id}`, {
+            const res = await fetch(`/api/request/status/${room._id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -29,11 +28,11 @@ const useRequest = () => {
         }
     };
 
-    const sendRequest = async () => {
+    const sendRequest = async (room: IUser) => {
         setLoading(true);
 
         try {
-            const res = await fetch(`/api/request/${selectedRoom._id}`, {
+            const res = await fetch(`/api/request/${room._id}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -53,11 +52,11 @@ const useRequest = () => {
         return false;
     };
 
-    const deleteRequest = async () => {
+    const deleteRequest = async (room: IUser) => {
         setLoading(true);
 
         try {
-            const res = await fetch(`/api/request/${selectedRoom._id}`, {
+            const res = await fetch(`/api/request/${room._id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

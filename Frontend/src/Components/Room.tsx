@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRoomContext } from "../Context/RoomContext";
 import { useSidebarContext } from "../Context/SidebarContext";
 import { useSocketContext } from "../Context/SocketContext";
 import useFriends from "../Hooks/useFriends";
-import { UserSidebarInfo } from "../interfaces";
+import { IUser, UserSidebarInfo } from "../interfaces";
 import { VscCheck, VscClose } from "react-icons/vsc";
 import toast from "react-hot-toast";
+import { MdOutlineGroupAdd } from "react-icons/md";
+import { FaUserClock } from "react-icons/fa6";
+import useRequest from "../Hooks/useRequest";
 
 const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
     const { selectedRoom, setSelectedRoom } = useRoomContext();
@@ -13,6 +16,41 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
     const { sidebarOpen, setSidebarOpen } = useSidebarContext();
     const { loading, acceptFriendReq, rejectFriendReq } = useFriends();
     const [pending, setPending] = useState(true);
+    const [friendStatus, setFriendStatus] = useState("Not Friends");
+
+    const {
+        loading: requestStatusLaoding,
+        getRequestStatus,
+        sendRequest,
+        deleteRequest,
+    } = useRequest();
+
+    useEffect(() => {
+        (async () => {
+            const status = await getRequestStatus(room);
+            setFriendStatus(status);
+        })();
+    }, []);
+
+    const handleAddFriend = async () => {
+        const requestStatus = await sendRequest(room);
+        if (requestStatus) {
+            toast.success("Request sent sucessfully!!");
+            setFriendStatus("Pending");
+        } else {
+            toast.error("Cannot send friend request!");
+        }
+    };
+
+    const handleRemoveRequest = async () => {
+        const requestRemoved = await deleteRequest(room);
+        if (requestRemoved) {
+            toast.success("Request removed sucessfully!!");
+            setFriendStatus("Not Friends");
+        } else {
+            toast.error("Cannot remove request!");
+        }
+    };
 
     const isSelected: boolean = selectedRoom?._id === room._id;
 
@@ -99,6 +137,26 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
                                     <VscClose size={20} />
                                 </button>
                             </div>
+                        ) : null}
+
+                        {category === "discover" ? (
+                            <p className="p-3 cursor-pointer rounded-full hover:bg-gray-500 hover:scale-110">
+                                {requestStatusLaoding ? (
+                                    <span className="text-center loading loading-spinner loading-xl"></span>
+                                ) : friendStatus === "Not Friends" ? (
+                                    <MdOutlineGroupAdd
+                                        size={35}
+                                        onClick={() => handleAddFriend()}
+                                    />
+                                ) : (
+                                    <FaUserClock
+                                        size={35}
+                                        onClick={() => {
+                                            handleRemoveRequest();
+                                        }}
+                                    />
+                                )}
+                            </p>
                         ) : null}
                     </div>
                     {!lastIndex ? (

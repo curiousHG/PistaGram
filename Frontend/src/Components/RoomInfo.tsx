@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import { FaUserClock } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import useFriends from "../Hooks/useFriends";
+import { useSocketContext } from "../Context/SocketContext";
+import { IUser } from "../interfaces";
 
 const RoomInfo = () => {
     const { selectedRoom } = useRoomContext();
@@ -19,18 +21,18 @@ const RoomInfo = () => {
     const [friendStatus, setFriendStatus] = useState("Not Friends");
     const { loading, getRequestStatus, sendRequest, deleteRequest } =
         useRequest();
-
+    const { socket } = useSocketContext();
     const { removeFriend } = useFriends();
 
     useEffect(() => {
         (async () => {
-            const status = await getRequestStatus();
+            const status = await getRequestStatus(selectedRoom);
             setFriendStatus(status);
         })();
     }, []);
 
     const handleAddFriend = async () => {
-        const requestStatus = await sendRequest();
+        const requestStatus = await sendRequest(selectedRoom);
         if (requestStatus) {
             toast.success("Request sent sucessfully!!");
             setFriendStatus("Pending");
@@ -40,7 +42,7 @@ const RoomInfo = () => {
     };
 
     const handleRemoveRequest = async () => {
-        const requestRemoved = await deleteRequest();
+        const requestRemoved = await deleteRequest(selectedRoom);
         if (requestRemoved) {
             toast.success("Request removed sucessfully!!");
             setFriendStatus("Not Friends");
