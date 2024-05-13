@@ -15,7 +15,7 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
 
     const [messageVar, setMessageVar] = useState(message.message);
     const { loading, deleteMessage, editMessage } = useMessage();
-    const [ dropDownButtonVisible, setDropDownButtonVisible ] = useState(false);
+    const [dropDownButtonVisible, setDropDownButtonVisible] = useState(false);
 
     const senderId = message.senderId;
 
@@ -74,12 +74,15 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
         return () => socket?.off("editMessage");
     }, [socket, message._id]);
 
-
-
     return (
-        <div className={messageClassName}
-            onMouseEnter={() => {setDropDownButtonVisible(true)}} 
-            onMouseLeave={() => {setDropDownButtonVisible(false)}}
+        <div
+            className={messageClassName}
+            onMouseEnter={() => {
+                setDropDownButtonVisible(true);
+            }}
+            onMouseLeave={() => {
+                setDropDownButtonVisible(false);
+            }}
         >
             <div className="chat-image avatar">
                 <div className="w-10 rounded-full cursor-pointer">
@@ -91,8 +94,8 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
                     {convertCreatedAt(message.createdAt)}
                 </time>
             </div>
-            
-            <div className="chat-bubble text-md hover:scale-110 hover:opacity-100 relative border-2 border-gray-800 " >
+
+            <div className="chat-bubble text-md hover:scale-110 hover:opacity-100 relative border-2 border-gray-800 ">
                 {editing ? (
                     loading ? (
                         <span className="text-center loading loading-spinner loading-xl"></span>
@@ -116,23 +119,37 @@ const Message = ({ sender, receiver, message }: IMessageProps) => {
                 ) : (
                     <span className="relative z-0">{messageVar}</span>
                 )}
-                
             </div>
-            <div className={`dropdown z-10 top-[-30px] ${dropDownButtonVisible ? 'opacity-100' : 'opacity-0'} ${btnClassName} border-1 border-cyan-50`}>
+            <div
+                className={`dropdown z-10 top-[-30px] ${
+                    dropDownButtonVisible ? "opacity-100" : "opacity-0"
+                } ${btnClassName} border-1 border-cyan-50`}
+            >
                 <div tabIndex={0} role="button" className="">
                     <MdArrowDropDownCircle size={20} />
                 </div>
-                <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box">
+                <ul
+                    tabIndex={0}
+                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box gap-2"
+                >
                     <li>
-                        <button className="text-md rounded-lg bg-gray-800 text-white hover:scale-110"
-                            onClick={() => handleFirstBtnClick()} >
+                        <button
+                            className="text-md rounded-lg bg-gray-800 text-white hover:scale-110"
+                            onClick={() => handleFirstBtnClick()}
+                        >
                             {editing ? <VscCheck /> : <FiEdit />}
                         </button>
                     </li>
                     <li>
-                        <button className="text-md rounded-lg bg-gray-800 text-white hover:scale-110"
-                            onClick={() => handleSecondBtnClick()} >
-                            {editing ? <VscClose /> : <MdOutlineDelete size={16} />}
+                        <button
+                            className="text-md rounded-lg bg-gray-800 text-white hover:scale-110"
+                            onClick={() => handleSecondBtnClick()}
+                        >
+                            {editing ? (
+                                <VscClose />
+                            ) : (
+                                <MdOutlineDelete size={16} />
+                            )}
                         </button>
                     </li>
                 </ul>
