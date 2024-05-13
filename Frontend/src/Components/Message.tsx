@@ -6,7 +6,6 @@ import { VscCheck, VscClose } from "react-icons/vsc";
 import { useEffect, useState } from "react";
 import useMessage from "../Hooks/useMessage";
 import { useSocketContext } from "../Context/SocketContext";
-import { set } from "mongoose";
 
 const Message = ({ sender, receiver, message }: IMessageProps) => {
     const [editing, setEditing] = useState(false);
