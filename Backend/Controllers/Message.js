@@ -1,6 +1,6 @@
 import Message from "../Models/Message.js";
 import Room from "../Models/Room.js";
-import { getReceiverSocketId, io } from "../socket.js";
+import { getSocketId, io } from "../socket.js";
 
 export const addMessage = async (req, res) => {
     try {
@@ -34,7 +34,7 @@ export const addMessage = async (req, res) => {
 
         await Promise.all([newMessage.save(), room.save()]);
 
-        const receiverSocketId = getReceiverSocketId(receiverId);
+        const receiverSocketId = getSocketId(receiverId);
 
         if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage", newMessage);
@@ -100,7 +100,7 @@ export const editMessage = async (req, res) => {
 
             const receiverId = message.receiverId;
 
-            const receiverSocketId = getReceiverSocketId(receiverId);
+            const receiverSocketId = getSocketId(receiverId);
             if (receiverSocketId) {
                 io.to(receiverSocketId).emit("editMessage", changedMessage);
             }
@@ -135,7 +135,7 @@ export const deleteMessage = async (req, res) => {
 
             const receiverId = message.receiverId;
 
-            const receiverSocketId = getReceiverSocketId(receiverId);
+            const receiverSocketId = getSocketId(receiverId);
             if (receiverSocketId) {
                 io.to(receiverSocketId).emit("deleteMessage", deletedMessage);
             }
