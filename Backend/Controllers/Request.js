@@ -1,13 +1,14 @@
 import Request from "../Models/Request.js";
 import User from "../Models/User.js";
+import { io, getReceiverSocketId } from "../socket.js";
 
 export const sendRequest = async (req, res) => {
     try {
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
 
-        const sender = await User.findById(senderId);
-        const receiver = await User.findById(receiverId);
+        const sender = await User.findById(senderId).select("-password");
+        const receiver = await User.findById(receiverId).select("-password");
 
         if (!sender) {
             throw new Error("Sender was not found in database! Login Again!");
@@ -42,6 +43,23 @@ export const sendRequest = async (req, res) => {
                     receiver.save(),
                 ]);
 
+                console.log(
+                    `New friend request received from ${sender.username} to ${receiver.username}`
+                );
+
+                const receiverSocketId = getReceiverSocketId(receiverId);
+
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit("newRequestReceived", sender);
+                    console.log(
+                        `newFriendRequest event emitted to receiver -> ${receiver.username} with socketId -> ${receiverSocketId}`
+                    );
+                } else {
+                    console.log(
+                        `Friend Request receiver -> ${receiver.username} was not online!`
+                    );
+                }
+
                 res.status(201).json({
                     requestSent: true,
                 });
@@ -62,8 +80,8 @@ export const deleteReq = async (req, res) => {
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
 
-        const sender = await User.findById(senderId);
-        const receiver = await User.findById(receiverId);
+        const sender = await User.findById(senderId).select("-v");
+        const receiver = await User.findById(receiverId).select("-v");
 
         if (!sender) {
             throw new Error("Sender was not found in database! Login Again!");
@@ -94,8 +112,27 @@ export const deleteReq = async (req, res) => {
                 senderId: senderId,
                 receiverId: receiverId,
             });
-            Promise.all([sender.save(), receiver.save()]);
+
             if (deletedReq.acknowledged) {
+                Promise.all([sender.save(), receiver.save()]);
+
+                console.log(
+                    `Friend request removed from ${sender.username} to ${receiver.username}`
+                );
+
+                const receiverSocketId = getReceiverSocketId(receiverId);
+
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit("requestRemoved", sender);
+                    console.log(
+                        `requestRemoved Event sent to receiver -> ${receiver.username} with socketId -> ${receiverSocketId}`
+                    );
+                } else {
+                    console.log(
+                        `Friend Request receiver -> ${receiver.username} was not online!`
+                    );
+                }
+
                 res.status(200).json({
                     requestRemoved: true,
                 });

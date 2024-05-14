@@ -3,7 +3,7 @@ import { useRoomContext } from "../Context/RoomContext";
 import { useSidebarContext } from "../Context/SidebarContext";
 import { useSocketContext } from "../Context/SocketContext";
 import useFriends from "../Hooks/useFriends";
-import { IUser, UserSidebarInfo } from "../interfaces";
+import { UserSidebarInfo } from "../interfaces";
 import { VscCheck, VscClose } from "react-icons/vsc";
 import toast from "react-hot-toast";
 import { MdOutlineGroupAdd } from "react-icons/md";
@@ -11,13 +11,17 @@ import { FaUserClock } from "react-icons/fa6";
 import useRequest from "../Hooks/useRequest";
 
 const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
-    const { selectedRoom, setSelectedRoom } = useRoomContext();
-    const { onlineUsers } = useSocketContext();
-    const { sidebarOpen, setSidebarOpen } = useSidebarContext();
-    const { loading, acceptFriendReq, rejectFriendReq } = useFriends();
+    // States
     const [pending, setPending] = useState(true);
     const [friendStatus, setFriendStatus] = useState("Not Friends");
 
+    // Contexts
+    const { onlineUsers } = useSocketContext();
+    const { selectedRoom, setSelectedRoom } = useRoomContext();
+    const { sidebarOpen, setSidebarOpen } = useSidebarContext();
+
+    // Hooks
+    const { loading, acceptFriendReq, rejectFriendReq } = useFriends();
     const {
         loading: requestStatusLaoding,
         getRequestStatus,
@@ -25,12 +29,9 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
         deleteRequest,
     } = useRequest();
 
-    useEffect(() => {
-        (async () => {
-            const status = await getRequestStatus(room);
-            setFriendStatus(status);
-        })();
-    }, []);
+    const handleRoomClick = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
 
     const handleAddFriend = async () => {
         const requestStatus = await sendRequest(room);
@@ -52,22 +53,6 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
         }
     };
 
-    const isSelected: boolean = selectedRoom?._id === room._id;
-
-    const handleRoomClick = () => {
-        setSidebarOpen(!sidebarOpen);
-    };
-
-    const selectedStyle: string = isSelected
-        ? "bg-gray-500 scale-110"
-        : "hover:bg-gray-500 hover:scale-110";
-    const hiddenStyle: string = pending ? "" : "hidden";
-    const loaderStyle: string = loading ? "justify-center" : "";
-    const className: string = `flex flex-col gap-2 px-2 my-2 ${selectedStyle} ${hiddenStyle} ${loaderStyle}`;
-    const onlineStatus = onlineUsers.includes(room._id)
-        ? "avatar online"
-        : "avatar";
-
     const handleAcceptReq = async () => {
         const accepted = await acceptFriendReq(room);
         if (accepted) {
@@ -88,6 +73,26 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
             toast.error("Cannot reject this friend request!");
         }
     };
+
+    // Normal use effects
+    useEffect(() => {
+        (async () => {
+            const status = await getRequestStatus(room);
+            setFriendStatus(status);
+        })();
+    }, []);
+
+    const isSelected: boolean = selectedRoom?._id === room._id;
+
+    const selectedStyle: string = isSelected
+        ? "bg-gray-500 scale-110"
+        : "hover:bg-gray-500 hover:scale-110";
+    const hiddenStyle: string = pending ? "" : "hidden";
+    const loaderStyle: string = loading ? "justify-center" : "";
+    const className: string = `flex flex-col gap-2 px-2 my-2 ${selectedStyle} ${hiddenStyle} ${loaderStyle}`;
+    const onlineStatus = onlineUsers.includes(room._id)
+        ? "avatar online"
+        : "avatar";
 
     return (
         <div

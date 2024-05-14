@@ -2,13 +2,20 @@ import { useEffect, useState } from "react";
 import { useSearchBoxContext } from "../Context/SearchBoxContext";
 import useRooms from "../Hooks/useRoom";
 import Room from "./Room";
-import { IRoomsProps } from "../interfaces";
+import { IRoomsProps, IUser } from "../interfaces";
+import { useSocketContext } from "../Context/SocketContext";
+import toast from "react-hot-toast";
 
 const Rooms = ({ category }: IRoomsProps) => {
+    // Context
     const { searchBox } = useSearchBoxContext();
-    const { loading, roomData } = useRooms(category);
+    const { socket } = useSocketContext();
+    // Hooks
+    const { loading, roomData, setRoomData } = useRooms(category);
+    // State
     const [filteredRoomData, setFilteredRoomData] = useState(roomData);
 
+    // Normal UseEffect
     useEffect(() => {
         if (!loading) {
             setFilteredRoomData(roomData);
@@ -22,6 +29,41 @@ const Rooms = ({ category }: IRoomsProps) => {
             );
         }
     }, [loading, roomData, searchBox]);
+
+    // Socket Use Effect
+    useEffect(() => {
+        socket?.on("newRequestReceived", (sender: IUser) => {
+            if (category === "friends") {
+            } else if (category === "pending") {
+                console.log(
+                    `New friend request received from ${sender._id} to me`
+                );
+                setRoomData([...roomData, sender]);
+            } else {
+            }
+            toast.success(
+                `New friend request received from ${sender.username}`
+            );
+        });
+        return () => socket?.off("newRequestReceived");
+    }, [socket, roomData]);
+
+    useEffect(() => {
+        socket?.on("requestRemoved", (sender: IUser) => {
+            if (category === "friends") {
+            } else if (category === "pending") {
+                console.log(`Friend Request removed by ${sender.username}`);
+                const filteredRoomData = roomData.filter((user) => {
+                    return user._id !== sender._id;
+                });
+                setRoomData(filteredRoomData);
+            } else {
+            }
+            toast.error(`Friend Request removed by ${sender.username}`);
+        });
+
+        return () => socket?.off("requestRemoved");
+    }, [socket, roomData]);
 
     return (
         <div className="overflow-x-hidden mt-3">
