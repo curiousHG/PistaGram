@@ -65,6 +65,27 @@ const Rooms = ({ category }: IRoomsProps) => {
         return () => socket?.off("requestRemoved");
     }, [socket, roomData]);
 
+    useEffect(() => {
+        socket?.on("requestAccepted", (receiver: IUser) => {
+            if (category === "friends") {
+                console.log(
+                    `Friend request sent by you was accepted by ${receiver.username}`
+                );
+                setRoomData([...roomData, receiver]);
+            } else if (category === "pending") {
+            } else {
+                const filteredRoomData = roomData.filter((user) => {
+                    return user._id !== receiver._id;
+                });
+                setRoomData(filteredRoomData);
+            }
+            toast.success(
+                `Friend request sent by you was accepted by ${receiver.username}`
+            );
+        });
+        return () => socket?.off("requestAccepted");
+    }, [socket, roomData]);
+
     return (
         <div className="overflow-x-hidden mt-3">
             {loading ? (

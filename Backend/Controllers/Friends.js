@@ -1,5 +1,6 @@
 import Request from "../Models/Request.js";
 import User from "../Models/User.js";
+import { io, getSocketId } from "../socket.js";
 
 export const acceptRequest = async (req, res) => {
     try {
@@ -12,9 +13,9 @@ export const acceptRequest = async (req, res) => {
         });
 
         if (request) {
-            const receiver = await User.findById(receiverId);
+            const receiver = await User.findById(receiverId).select("-v");
             if (receiver) {
-                const sender = await User.findById(senderId);
+                const sender = await User.findById(senderId).select("-v");
 
                 if (sender) {
                     // Remove requestId from receiver incoming requests
@@ -41,7 +42,44 @@ export const acceptRequest = async (req, res) => {
                     if (deletedRequest.acknowledged) {
                         sender.friends.push(receiverId);
                         receiver.friends.push(senderId);
+
                         Promise.all([sender.save(), receiver.save()]);
+
+                        console.log(
+                            `Friend request from ${sender.username} to ${receiver.username} was accepted by ${receiver.username}!`
+                        );
+
+                        const senderSocketId = getSocketId(senderId);
+
+                        if (senderSocketId) {
+                            io.to(senderSocketId).emit(
+                                "requestAccepted",
+                                receiver
+                            );
+                            console.log(
+                                `requestAccepted event was sent to ${sender.username} with socketId -> ${senderSocketId} for friend request from ${sender.username} to ${receiver.username}`
+                            );
+                        } else {
+                            console.log(
+                                `Sender -> ${sender.username} of the request (Receiver -> ${receiver.username}) is not online!`
+                            );
+                        }
+
+                        const receiverSocketId = getSocketId(receiverId);
+
+                        if (receiverSocketId) {
+                            io.to(receiverSocketId).emit(
+                                "acceptRequest",
+                                sender
+                            );
+                            console.log(
+                                `acceptRequest event was sent to ${receiver.username} with socketId -> ${receiverSocketId} for friend request from ${sender.username} to ${receiver.username}`
+                            );
+                        } else {
+                            console.log(
+                                `Receiver -> ${receiver.username} of the request (Sender -> ${sender.username}) is not online!`
+                            );
+                        }
 
                         res.status(201).json({
                             requestAccepted: true,

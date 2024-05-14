@@ -86,6 +86,25 @@ const RoomInfo = () => {
         return () => socket?.off("requestRemoval");
     }, [socket, friendStatus]);
 
+    useEffect(() => {
+        socket?.on("requestAccepted", (receiver: IUser) => {
+            if (selectedRoom && selectedRoom._id === receiver._id) {
+                setFriendStatus("Friends");
+            }
+        });
+        return () => socket?.off("requestAccepted");
+    }, [socket, friendStatus]);
+
+    useEffect(() => {
+        socket?.on("acceptRequest", (sender: IUser) => {
+            if (selectedRoom && selectedRoom._id === sender._id) {
+                setFriendStatus("Friends");
+            }
+        });
+
+        return () => socket?.off("acceptRequest");
+    }, [socket, friendStatus]);
+
     if (!userInfoPopup) return;
     else {
         return (
