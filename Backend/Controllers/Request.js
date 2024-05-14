@@ -1,6 +1,6 @@
 import Request from "../Models/Request.js";
 import User from "../Models/User.js";
-import { io, getReceiverSocketId } from "../socket.js";
+import { io, getSocketId } from "../socket.js";
 
 export const sendRequest = async (req, res) => {
     try {
@@ -47,7 +47,7 @@ export const sendRequest = async (req, res) => {
                     `New friend request received from ${sender.username} to ${receiver.username}`
                 );
 
-                const receiverSocketId = getReceiverSocketId(receiverId);
+                const receiverSocketId = getSocketId(receiverId);
 
                 if (receiverSocketId) {
                     io.to(receiverSocketId).emit("newRequestReceived", sender);
@@ -57,6 +57,19 @@ export const sendRequest = async (req, res) => {
                 } else {
                     console.log(
                         `Friend Request receiver -> ${receiver.username} was not online!`
+                    );
+                }
+
+                const senderSocketId = getSocketId(senderId);
+
+                if (senderSocketId) {
+                    io.to(senderSocketId).emit("friendRequestSent", receiver);
+                    console.log(
+                        `friendRequestSent to receiver -> ${receiver.username} by sender -> ${sender.username} with sender's socketId -> ${senderSocketId} `
+                    );
+                } else {
+                    console.log(
+                        `Sender -> ${sender.username} of friend request was not online!`
                     );
                 }
 
@@ -120,7 +133,7 @@ export const deleteReq = async (req, res) => {
                     `Friend request removed from ${sender.username} to ${receiver.username}`
                 );
 
-                const receiverSocketId = getReceiverSocketId(receiverId);
+                const receiverSocketId = getSocketId(receiverId);
 
                 if (receiverSocketId) {
                     io.to(receiverSocketId).emit("requestRemoved", sender);
@@ -130,6 +143,19 @@ export const deleteReq = async (req, res) => {
                 } else {
                     console.log(
                         `Friend Request receiver -> ${receiver.username} was not online!`
+                    );
+                }
+
+                const senderSocketId = getSocketId(senderId);
+
+                if (senderSocketId) {
+                    io.to(senderSocketId).emit("requestRemoval", receiver);
+                    console.log(
+                        `requestRemoval sent to sender -> ${sender.username} with sender's socketId -> ${senderSocketId}, request receiver -> ${receiver.username} `
+                    );
+                } else {
+                    console.log(
+                        `Sender -> ${sender.username} of request deleted was not online!`
                     );
                 }
 

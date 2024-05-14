@@ -3,7 +3,7 @@ import { useRoomContext } from "../Context/RoomContext";
 import { useSidebarContext } from "../Context/SidebarContext";
 import { useSocketContext } from "../Context/SocketContext";
 import useFriends from "../Hooks/useFriends";
-import { UserSidebarInfo } from "../interfaces";
+import { IUser, UserSidebarInfo } from "../interfaces";
 import { VscCheck, VscClose } from "react-icons/vsc";
 import toast from "react-hot-toast";
 import { MdOutlineGroupAdd } from "react-icons/md";
@@ -16,7 +16,7 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
     const [friendStatus, setFriendStatus] = useState("Not Friends");
 
     // Contexts
-    const { onlineUsers } = useSocketContext();
+    const { socket, onlineUsers } = useSocketContext();
     const { selectedRoom, setSelectedRoom } = useRoomContext();
     const { sidebarOpen, setSidebarOpen } = useSidebarContext();
 
@@ -81,6 +81,28 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
             setFriendStatus(status);
         })();
     }, []);
+
+    //Socket use effects
+    useEffect(() => {
+        socket?.on("friendRequestSent", (receiver: IUser) => {
+            if (room && room._id === receiver._id) {
+                setFriendStatus("Pending");
+                setPending(true);
+            }
+        });
+
+        return () => socket?.off("friendRequestSent");
+    }, [socket, friendStatus, pending]);
+
+    useEffect(() => {
+        socket?.on("requestRemoval", (receiver: IUser) => {
+            if (room && room._id === receiver._id) {
+                setFriendStatus("Not Friends");
+            }
+        });
+
+        return () => socket?.off("requestRemoval");
+    }, [socket, friendStatus, pending]);
 
     const isSelected: boolean = selectedRoom?._id === room._id;
 

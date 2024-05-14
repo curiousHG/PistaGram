@@ -16,20 +16,16 @@ import { useSocketContext } from "../Context/SocketContext";
 import { IUser } from "../interfaces";
 
 const RoomInfo = () => {
-    const { selectedRoom } = useRoomContext();
+    // State
     const { userInfoPopup, setUserInfoPopup } = useUserInfoContext();
     const [friendStatus, setFriendStatus] = useState("Not Friends");
+    // Context
+    const { selectedRoom } = useRoomContext();
+    const { socket } = useSocketContext();
+    // Hooks
     const { loading, getRequestStatus, sendRequest, deleteRequest } =
         useRequest();
-    const { socket } = useSocketContext();
     const { removeFriend } = useFriends();
-
-    useEffect(() => {
-        (async () => {
-            const status = await getRequestStatus(selectedRoom);
-            setFriendStatus(status);
-        })();
-    }, []);
 
     const handleAddFriend = async () => {
         const requestStatus = await sendRequest(selectedRoom);
@@ -60,6 +56,35 @@ const RoomInfo = () => {
             toast.error("Cannot remove friend!");
         }
     };
+
+    // Normal use effects
+    useEffect(() => {
+        (async () => {
+            const status = await getRequestStatus(selectedRoom);
+            setFriendStatus(status);
+        })();
+    }, [selectedRoom, friendStatus]);
+
+    // Socket
+    useEffect(() => {
+        socket?.on("friendRequestSent", (receiver: IUser) => {
+            if (selectedRoom && selectedRoom._id === receiver._id) {
+                setFriendStatus("Pending");
+            }
+        });
+
+        return () => socket?.off("friendRequestSent");
+    }, [socket, friendStatus]);
+
+    useEffect(() => {
+        socket?.on("requestRemoval", (receiver: IUser) => {
+            if (selectedRoom && selectedRoom._id === receiver._id) {
+                setFriendStatus("Not Friends");
+            }
+        });
+
+        return () => socket?.off("requestRemoval");
+    }, [socket, friendStatus]);
 
     if (!userInfoPopup) return;
     else {
