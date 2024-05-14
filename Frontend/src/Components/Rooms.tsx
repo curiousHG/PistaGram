@@ -86,6 +86,47 @@ const Rooms = ({ category }: IRoomsProps) => {
         return () => socket?.off("requestAccepted");
     }, [socket, roomData]);
 
+    useEffect(() => {
+        socket?.on("friendRemoved", (friend: IUser) => {
+            if (category === "friends") {
+                console.log(
+                    `You were removed as a friend by ${friend.username}`
+                );
+
+                const filteredRoomData = roomData.filter((user) => {
+                    return user._id !== friend._id;
+                });
+                setRoomData(filteredRoomData);
+            } else if (category === "pending") {
+            } else {
+                if (!roomData.find((user) => user._id === friend._id)) {
+                    setRoomData([...roomData, friend]);
+                }
+            }
+            toast.error(`You were removed as a friend by ${friend.username}`);
+        });
+
+        return () => socket?.off("friendRemoved");
+    }, [socket, roomData]);
+
+    useEffect(() => {
+        socket?.on("removeFriend", (friend: IUser) => {
+            if (category === "friends") {
+                const filteredRoomData = roomData.filter((user) => {
+                    return user._id !== friend._id;
+                });
+                setRoomData(filteredRoomData);
+            } else if (category === "pending") {
+            } else {
+                if (!roomData.find((user) => user._id === friend._id)) {
+                    setRoomData([...roomData, friend]);
+                }
+            }
+        });
+
+        return () => socket?.off("removeFriend");
+    }, [socket, roomData]);
+
     return (
         <div className="overflow-x-hidden mt-3">
             {loading ? (

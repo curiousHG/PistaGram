@@ -149,6 +149,42 @@ export const rejectRequest = async (req, res) => {
                     if (deletedRequest.acknowledged) {
                         Promise.all([sender.save(), receiver.save()]);
 
+                        console.log(
+                            `Friend request from ${sender.username} to ${receiver.username} was rejected by ${receiver.username}!`
+                        );
+
+                        const senderSocketId = getSocketId(senderId);
+
+                        if (senderSocketId) {
+                            io.to(senderSocketId).emit(
+                                "requestRejected",
+                                receiver
+                            );
+                            console.log(
+                                `requestRejected event was sent to ${sender.username} with socketId -> ${senderSocketId} for friend request from ${sender.username} to ${receiver.username}`
+                            );
+                        } else {
+                            console.log(
+                                `Sender -> ${sender.username} of the request (Receiver -> ${receiver.username}) is not online!`
+                            );
+                        }
+
+                        const receiverSocketId = getSocketId(receiverId);
+
+                        if (receiverSocketId) {
+                            io.to(receiverSocketId).emit(
+                                "rejectRequest",
+                                sender
+                            );
+                            console.log(
+                                `rejectRequest event was sent to ${receiver.username} with socketId -> ${receiverSocketId} for friend request from ${sender.username} to ${receiver.username}`
+                            );
+                        } else {
+                            console.log(
+                                `Receiver -> ${receiver.username} of the request (Sender -> ${sender.username}) is not online!`
+                            );
+                        }
+
                         res.status(201).json({
                             requestAccepted: true,
                         });
@@ -182,8 +218,8 @@ export const removeFriend = async (req, res) => {
         const { id: friendId } = req.params;
         const userId = req.user._id;
 
-        const user = await User.findById(userId);
-        const friend = await User.findById(friendId);
+        const user = await User.findById(userId).select("-password");
+        const friend = await User.findById(friendId).select("-password");
 
         if (user) {
             if (friend) {
@@ -198,6 +234,31 @@ export const removeFriend = async (req, res) => {
                 friend.friends = filteredFriendsFriend;
 
                 Promise.all([user.save(), friend.save()]);
+
+                const friendSocketId = getSocketId(friendId);
+
+                if (friendSocketId) {
+                    io.to(friendSocketId).emit("friendRemoved", user);
+                    console.log(
+                        `friendRemoved event emitted to friend -> ${friend.username} from user -> ${user.username} with friendSocketId -> ${friendSocketId}}`
+                    );
+                } else {
+                    console.log(
+                        `Friend -> ${friend.username} removed is not online!`
+                    );
+                }
+
+                const userSocketId = getSocketId(userId);
+                if (userSocketId) {
+                    io.to(userSocketId).emit("removeFriend", friend);
+                    console.log(
+                        `removeFriend event emitted to user -> ${user.username} due to removal of friendship between user -> ${user.username} and friend -> ${friend.username} with userSocketId -> ${userSocketId} `
+                    );
+                } else {
+                    console.log(
+                        `User -> ${user.username} removing Friend -> ${friend.username} is not online!`
+                    );
+                }
 
                 res.status(200).json({
                     friendRemoved: true,

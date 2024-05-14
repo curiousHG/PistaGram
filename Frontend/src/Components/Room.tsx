@@ -23,7 +23,7 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
     // Hooks
     const { loading, acceptFriendReq, rejectFriendReq } = useFriends();
     const {
-        loading: requestStatusLaoding,
+        loading: requestStatusLoading,
         getRequestStatus,
         sendRequest,
         deleteRequest,
@@ -98,10 +98,36 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
         socket?.on("requestRemoval", (receiver: IUser) => {
             if (room && room._id === receiver._id) {
                 setFriendStatus("Not Friends");
+                setPending(true);
             }
         });
 
         return () => socket?.off("requestRemoval");
+    }, [socket, friendStatus, pending]);
+
+    useEffect(() => {
+        socket?.on("requestRejected", (receiver: IUser) => {
+            if (room && room._id === receiver._id) {
+                setFriendStatus("Not Friends");
+                setPending(true);
+                toast.error(
+                    `Friend request sent by you was rejected by ${receiver.username}`
+                );
+            }
+        });
+
+        return () => socket?.off("requestRejected");
+    }, [socket, friendStatus, pending]);
+
+    useEffect(() => {
+        socket?.on("removeFriend", (friend: IUser) => {
+            if (room && room._id === friend._id) {
+                setFriendStatus("Not Friends");
+                setPending(true);
+            }
+        });
+
+        return () => socket?.off("removeFriend");
     }, [socket, friendStatus, pending]);
 
     const isSelected: boolean = selectedRoom?._id === room._id;
@@ -168,7 +194,7 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
 
                         {category === "discover" ? (
                             <p className="p-3 cursor-pointer rounded-full hover:bg-gray-500 hover:scale-110">
-                                {requestStatusLaoding ? (
+                                {requestStatusLoading ? (
                                     <span className="text-center loading loading-spinner loading-xl"></span>
                                 ) : friendStatus === "Not Friends" ? (
                                     <MdOutlineGroupAdd
