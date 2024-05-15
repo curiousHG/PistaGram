@@ -3,7 +3,7 @@ import MessageBody from "./MessageBody.js";
 import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../Context/AuthContext.js";
 import { useRoomContext } from "../Context/RoomContext.js";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSidebarContext } from "../Context/SidebarContext.js";
 import { GiHamburgerMenu } from "react-icons/gi";
 import RoomInfo from "./RoomInfo.js";

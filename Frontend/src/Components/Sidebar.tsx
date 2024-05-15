@@ -19,7 +19,7 @@ export const BUTTON_DATA = [
 ];
 
 const Sidebar = () => {
-    const { category, setCategory } = useSidebarContext();
+    const { setCategory } = useSidebarContext();
 
     const handleButtonClick = (button: any) => {
         setCategory(button.value);

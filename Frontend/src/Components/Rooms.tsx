@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchBoxContext } from "../Context/SearchBoxContext";
 import useRooms from "../Hooks/useRoom";
 import Room from "./Room";
-import { IRoomsProps, IUser } from "../interfaces";
+import { IUser } from "../interfaces";
 import { useSocketContext } from "../Context/SocketContext";
 import toast from "react-hot-toast";
 import { useSidebarContext } from "../Context/SidebarContext";

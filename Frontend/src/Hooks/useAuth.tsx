@@ -36,8 +36,8 @@ const useAuth = () => {
             }
 
             localStorage.setItem("auth-user", JSON.stringify(data));
-
             setAuthUser(data);
+            toast.success(`Signup successfull, logged in directly!`);
         } catch (error: any) {
             toast.error(error.message);
         } finally {
@@ -67,6 +67,7 @@ const useAuth = () => {
 
             localStorage.setItem("auth-user", JSON.stringify(data));
             setAuthUser(data);
+            toast.success(`Logged in successfully}!`);
         } catch (error: any) {
             toast.error(error.message);
         } finally {
