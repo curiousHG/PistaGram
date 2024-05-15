@@ -83,6 +83,18 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
     }, []);
 
     //Socket use effects
+    // For receiver
+    useEffect(() => {
+        socket?.on("newRequestReceived", (sender: IUser) => {
+            if (room && room._id === sender._id) {
+                setFriendStatus("Pending");
+                setPending(true);
+            }
+        });
+        return () => socket?.off("newRequestReceived");
+    }, [socket, friendStatus, pending]);
+
+    // For sender
     useEffect(() => {
         socket?.on("friendRequestSent", (receiver: IUser) => {
             if (room && room._id === receiver._id) {
@@ -94,6 +106,19 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
         return () => socket?.off("friendRequestSent");
     }, [socket, friendStatus, pending]);
 
+    // For receiver
+    useEffect(() => {
+        socket?.on("requestRemoved", (sender: IUser) => {
+            if (room && room._id === sender._id) {
+                setFriendStatus("Not Friends");
+                setPending(true);
+            }
+        });
+
+        return () => socket?.off("requestRemoved");
+    }, [socket, pending, friendStatus]);
+
+    // For sender
     useEffect(() => {
         socket?.on("requestRemoval", (receiver: IUser) => {
             if (room && room._id === receiver._id) {
@@ -104,6 +129,17 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
 
         return () => socket?.off("requestRemoval");
     }, [socket, friendStatus, pending]);
+
+    useEffect(() => {
+        socket?.on("acceptRequest", (sender: IUser) => {
+            if (room && room._id === sender._id) {
+                setFriendStatus("Friends");
+                setPending(false);
+            }
+        });
+
+        return () => socket?.off("acceptRequest");
+    }, [socket, friendStatus]);
 
     useEffect(() => {
         socket?.on("requestRejected", (receiver: IUser) => {

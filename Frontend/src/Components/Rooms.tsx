@@ -33,13 +33,11 @@ const Rooms = ({ category }: IRoomsProps) => {
     // Socket Use Effect
     useEffect(() => {
         socket?.on("newRequestReceived", (sender: IUser) => {
-            if (category === "friends") {
-            } else if (category === "pending") {
+            if (category === "pending") {
                 console.log(
                     `New friend request received from ${sender._id} to me`
                 );
                 setRoomData([...roomData, sender]);
-            } else {
             }
             toast.success(
                 `New friend request received from ${sender.username}`
