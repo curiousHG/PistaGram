@@ -67,6 +67,15 @@ const RoomInfo = () => {
 
     // Socket
     useEffect(() => {
+        socket?.on("newRequestReceived", (sender: IUser) => {
+            if (selectedRoom && selectedRoom._id === sender._id) {
+                setFriendStatus("Pending");
+            }
+        });
+        return () => socket?.off("newRequestReceived");
+    }, [socket, friendStatus]);
+
+    useEffect(() => {
         socket?.on("friendRequestSent", (receiver: IUser) => {
             if (selectedRoom && selectedRoom._id === receiver._id) {
                 setFriendStatus("Pending");
@@ -84,6 +93,16 @@ const RoomInfo = () => {
         });
 
         return () => socket?.off("requestRemoval");
+    }, [socket, friendStatus]);
+
+    useEffect(() => {
+        socket?.on("requestRemoved", (sender: IUser) => {
+            if (selectedRoom && selectedRoom._id === sender._id) {
+                setFriendStatus("Not Friends");
+            }
+        });
+
+        return () => socket?.off("requestRemoved");
     }, [socket, friendStatus]);
 
     useEffect(() => {
