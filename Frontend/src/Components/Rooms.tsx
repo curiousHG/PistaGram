@@ -5,12 +5,14 @@ import Room from "./Room";
 import { IRoomsProps, IUser } from "../interfaces";
 import { useSocketContext } from "../Context/SocketContext";
 import toast from "react-hot-toast";
+import { useSidebarContext } from "../Context/SidebarContext";
 
-const Rooms = ({ category }: IRoomsProps) => {
+const Rooms = () => {
     // Context
     const { searchBox } = useSearchBoxContext();
     const { socket } = useSocketContext();
     // Hooks
+    const { category } = useSidebarContext();
     const { loading, roomData, setRoomData } = useRooms(category);
     // State
     const [filteredRoomData, setFilteredRoomData] = useState(roomData);
@@ -32,46 +34,48 @@ const Rooms = ({ category }: IRoomsProps) => {
 
     // Socket Use Effect
     useEffect(() => {
-        socket?.on("newRequestReceived", (sender: IUser) => {
+        socket?.on("requestReceived", (sender: IUser) => {
             if (category === "pending") {
                 console.log(
                     `New friend request received from ${sender._id} to me`
                 );
-                setRoomData([...roomData, sender]);
+                if (!roomData.find((user) => user._id === sender._id)) {
+                    setRoomData([...roomData, sender]);
+                }
             }
             toast.success(
                 `New friend request received from ${sender.username}`
             );
         });
-        return () => socket?.off("newRequestReceived");
+
+        return () => socket?.off("requestReceived");
     }, [socket, roomData]);
 
     useEffect(() => {
-        socket?.on("requestRemoved", (sender: IUser) => {
-            if (category === "friends") {
-            } else if (category === "pending") {
+        socket?.on("requestRemovedSucessfully", (sender: IUser) => {
+            if (category === "pending") {
                 console.log(`Friend Request removed by ${sender.username}`);
                 const filteredRoomData = roomData.filter((user) => {
                     return user._id !== sender._id;
                 });
                 setRoomData(filteredRoomData);
-            } else {
             }
             toast.error(`Friend Request removed by ${sender.username}`);
         });
 
-        return () => socket?.off("requestRemoved");
+        return () => socket?.off("requestRemovedSucessfully");
     }, [socket, roomData]);
 
     useEffect(() => {
-        socket?.on("requestAccepted", (receiver: IUser) => {
+        socket?.on("requestAcceptedSuccessfully", (receiver: IUser) => {
             if (category === "friends") {
                 console.log(
                     `Friend request sent by you was accepted by ${receiver.username}`
                 );
-                setRoomData([...roomData, receiver]);
-            } else if (category === "pending") {
-            } else {
+                if (!roomData.find((user) => user._id === receiver._id)) {
+                    setRoomData([...roomData, receiver]);
+                }
+            } else if (category === "discover") {
                 const filteredRoomData = roomData.filter((user) => {
                     return user._id !== receiver._id;
                 });
@@ -81,7 +85,7 @@ const Rooms = ({ category }: IRoomsProps) => {
                 `Friend request sent by you was accepted by ${receiver.username}`
             );
         });
-        return () => socket?.off("requestAccepted");
+        return () => socket?.off("requestAcceptedSuccessfully");
     }, [socket, roomData]);
 
     useEffect(() => {
@@ -95,8 +99,7 @@ const Rooms = ({ category }: IRoomsProps) => {
                     return user._id !== friend._id;
                 });
                 setRoomData(filteredRoomData);
-            } else if (category === "pending") {
-            } else {
+            } else if (category === "discover") {
                 if (!roomData.find((user) => user._id === friend._id)) {
                     setRoomData([...roomData, friend]);
                 }
@@ -105,24 +108,6 @@ const Rooms = ({ category }: IRoomsProps) => {
         });
 
         return () => socket?.off("friendRemoved");
-    }, [socket, roomData]);
-
-    useEffect(() => {
-        socket?.on("removeFriend", (friend: IUser) => {
-            if (category === "friends") {
-                const filteredRoomData = roomData.filter((user) => {
-                    return user._id !== friend._id;
-                });
-                setRoomData(filteredRoomData);
-            } else if (category === "pending") {
-            } else {
-                if (!roomData.find((user) => user._id === friend._id)) {
-                    setRoomData([...roomData, friend]);
-                }
-            }
-        });
-
-        return () => socket?.off("removeFriend");
     }, [socket, roomData]);
 
     return (

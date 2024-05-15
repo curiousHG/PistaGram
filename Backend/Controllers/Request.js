@@ -60,6 +60,17 @@ export const sendRequest = async (req, res) => {
                     );
                 }
 
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit("requestReceived", sender);
+                    console.log(
+                        `requestReceived event emitted to receiver -> ${receiver.username} with socketId -> ${receiverSocketId}`
+                    );
+                } else {
+                    console.log(
+                        `Friend Request receiver -> ${receiver.username} was not online!`
+                    );
+                }
+
                 const senderSocketId = getSocketId(senderId);
 
                 if (senderSocketId) {
@@ -139,6 +150,20 @@ export const deleteReq = async (req, res) => {
                     io.to(receiverSocketId).emit("requestRemoved", sender);
                     console.log(
                         `requestRemoved Event sent to receiver -> ${receiver.username} with socketId -> ${receiverSocketId}`
+                    );
+                } else {
+                    console.log(
+                        `Friend Request receiver -> ${receiver.username} was not online!`
+                    );
+                }
+
+                if (receiverSocketId) {
+                    io.to(receiverSocketId).emit(
+                        "requestRemovedSucessfully",
+                        sender
+                    );
+                    console.log(
+                        `requestRemovedSucessfully Event sent to receiver -> ${receiver.username} with socketId -> ${receiverSocketId}`
                     );
                 } else {
                     console.log(

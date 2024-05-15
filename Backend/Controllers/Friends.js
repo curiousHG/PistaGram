@@ -65,6 +65,20 @@ export const acceptRequest = async (req, res) => {
                             );
                         }
 
+                        if (senderSocketId) {
+                            io.to(senderSocketId).emit(
+                                "requestAcceptedSuccessfully",
+                                receiver
+                            );
+                            console.log(
+                                `requestAcceptedSuccessfully event was sent to ${sender.username} with socketId -> ${senderSocketId} for friend request from ${sender.username} to ${receiver.username}`
+                            );
+                        } else {
+                            console.log(
+                                `Sender -> ${sender.username} of the request (Receiver -> ${receiver.username}) is not online!`
+                            );
+                        }
+
                         const receiverSocketId = getSocketId(receiverId);
 
                         if (receiverSocketId) {

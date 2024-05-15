@@ -10,7 +10,7 @@ import { MdOutlineGroupAdd } from "react-icons/md";
 import { FaUserClock } from "react-icons/fa6";
 import useRequest from "../Hooks/useRequest";
 
-const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
+const Room = ({ room, lastIndex }: UserSidebarInfo) => {
     // States
     const [pending, setPending] = useState(true);
     const [friendStatus, setFriendStatus] = useState("Not Friends");
@@ -18,7 +18,7 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
     // Contexts
     const { socket, onlineUsers } = useSocketContext();
     const { selectedRoom, setSelectedRoom } = useRoomContext();
-    const { sidebarOpen, setSidebarOpen } = useSidebarContext();
+    const { sidebarOpen, setSidebarOpen, category } = useSidebarContext();
 
     // Hooks
     const { loading, acceptFriendReq, rejectFriendReq } = useFriends();

@@ -14,6 +14,8 @@ import toast from "react-hot-toast";
 import useFriends from "../Hooks/useFriends";
 import { useSocketContext } from "../Context/SocketContext";
 import { IUser } from "../interfaces";
+import useRooms from "../Hooks/useRoom";
+import { useSidebarContext } from "../Context/SidebarContext";
 
 const RoomInfo = () => {
     // State
@@ -22,6 +24,8 @@ const RoomInfo = () => {
     // Context
     const { selectedRoom } = useRoomContext();
     const { socket } = useSocketContext();
+    const { category } = useSidebarContext();
+    const { roomData, setRoomData } = useRooms(category);
     // Hooks
     const { loading, getRequestStatus, sendRequest, deleteRequest } =
         useRequest();
@@ -52,6 +56,16 @@ const RoomInfo = () => {
         if (friendRemoved) {
             toast.success("Friend Removed successfully!");
             setFriendStatus("Not Friends");
+            if (category === "friends") {
+                const filteredRoomData = roomData.filter((user) => {
+                    return user._id !== selectedRoom._id;
+                });
+                setRoomData(filteredRoomData);
+            } else if (category === "discover") {
+                if (!roomData.find((user) => user._id === selectedRoom._id)) {
+                    setRoomData([...roomData, selectedRoom]);
+                }
+            }
         } else {
             toast.error("Cannot remove friend!");
         }

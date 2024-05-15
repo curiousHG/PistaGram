@@ -1,7 +1,7 @@
 import Searchbox from "./Searchbox";
 import Rooms from "./Rooms";
 import LogoutBtn from "./LogoutBtn";
-import { useState } from "react";
+import { useSidebarContext } from "../Context/SidebarContext";
 
 export const BUTTON_DATA = [
     {
@@ -19,7 +19,7 @@ export const BUTTON_DATA = [
 ];
 
 const Sidebar = () => {
-    const [category, setCategory] = useState("friends");
+    const { category, setCategory } = useSidebarContext();
 
     const handleButtonClick = (button: any) => {
         setCategory(button.value);
@@ -45,7 +45,7 @@ const Sidebar = () => {
                     ))}
                 </div>
                 <div className="h-5/6 max-h-[500px] overflow-y-auto">
-                    <Rooms category={category} />
+                    <Rooms />
                 </div>
             </div>
             <div className="h-10 my-5">

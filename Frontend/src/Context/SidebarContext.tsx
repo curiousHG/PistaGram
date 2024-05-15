@@ -10,9 +10,12 @@ export const useSidebarContext = () => {
 
 export const SidebarContextProvider = (props: any) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [category, setCategory] = useState("friends");
 
     return (
-        <SidebarContext.Provider value={{ sidebarOpen, setSidebarOpen }}>
+        <SidebarContext.Provider
+            value={{ sidebarOpen, setSidebarOpen, category, setCategory }}
+        >
             {props.children}
         </SidebarContext.Provider>
     );
