@@ -1,28 +1,14 @@
 import Searchbox from "./Searchbox";
 import Rooms from "./Rooms";
 import LogoutBtn from "./LogoutBtn";
-import { useState } from "react";
-
-export const BUTTON_DATA = [
-    {
-        value: "friends",
-        name: "Friends",
-    },
-    {
-        value: "discover",
-        name: "Discover",
-    },
-    {
-        value: "pending",
-        name: "Pending",
-    },
-];
+import { BUTTON_DATA } from "../constants";
+import { useRoomContext } from "../Context/RoomContext";
 
 const Sidebar = () => {
-    const [category, setCategory] = useState("friends");
+    const { category, setCategory } = useRoomContext();
 
-    const handleButtonClick = (button: any) => {
-        setCategory(button.value);
+    const handleButtonClick = (value: string) => {
+        setCategory(value);
     };
 
     return (
@@ -32,23 +18,27 @@ const Sidebar = () => {
                     <Searchbox />
                     <div className="divider px-1"></div>
                 </div>
-                <div className="text-sm flex flex-wrap items-center gap-2 px-2">
+                <div className="text-base flex flex-wrap items-center gap-2 px-2 whitespace-nowrap">
                     {BUTTON_DATA.map((button, key) => (
                         <button
-                            className={`bg-gray-500 bg-opacity-20 focus:bg-opacity-100 text-white py-2 px-4 hover:bg-opacity-100 rounded-xl shadow-lg hover:shadow-xl focus:shadow-xl transition duration-300 transform hover:scale-103 focus:scale-103`}
+                            className={`bg-blue-600  ${
+                                category === button.value
+                                    ? "bg-opacity-100 scale-110 shadow-xl border-solid border-2 bg-gradient-to-r from-violet-600 to-red-500"
+                                    : "bg-opacity-50 scale-100"
+                            } text-white py-2 px-4 hover:bg-opacity-100 rounded-xl shadow-lg hover:shadow-xl transition duration-300 transform hover:scale-103`}
                             key={key}
                             value={button.value}
-                            onClick={() => handleButtonClick(button)}
+                            onClick={() => handleButtonClick(button.value)}
                         >
                             {button.name}
                         </button>
                     ))}
                 </div>
-                <div className="h-5/6 max-h-[500px] overflow-y-auto">
+                <div className="h-full max-h-[500px] overflow-y-auto my-2">
                     <Rooms category={category} />
                 </div>
             </div>
-            <div className="h-10 my-5">
+            <div className="h-10 my-3">
                 <LogoutBtn />
             </div>
         </div>

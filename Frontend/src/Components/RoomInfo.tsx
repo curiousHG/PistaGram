@@ -13,7 +13,6 @@ import { FaUserClock } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import useFriends from "../Hooks/useFriends";
 import { useSocketContext } from "../Context/SocketContext";
-import { IUser } from "../interfaces";
 
 const RoomInfo = () => {
     const { selectedRoom } = useRoomContext();

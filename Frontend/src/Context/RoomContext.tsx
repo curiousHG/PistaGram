@@ -9,10 +9,13 @@ export const useRoomContext = () => {
 };
 
 export const RoomContextProvider = (props: any) => {
+    const [category, setCategory] = useState("friends");
     const [selectedRoom, setSelectedRoom] = useState(DEFAULT_ROOM);
 
     return (
-        <RoomContext.Provider value={{ selectedRoom, setSelectedRoom }}>
+        <RoomContext.Provider
+            value={{ selectedRoom, setSelectedRoom, category, setCategory }}
+        >
             {props.children}
         </RoomContext.Provider>
     );

@@ -3,15 +3,15 @@ import { useRoomContext } from "../Context/RoomContext";
 import { useSidebarContext } from "../Context/SidebarContext";
 import { useSocketContext } from "../Context/SocketContext";
 import useFriends from "../Hooks/useFriends";
-import { IUser, UserSidebarInfo } from "../interfaces";
+import { UserSidebarInfo } from "../interfaces";
 import { VscCheck, VscClose } from "react-icons/vsc";
 import toast from "react-hot-toast";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import { FaUserClock } from "react-icons/fa6";
 import useRequest from "../Hooks/useRequest";
 
-const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
-    const { selectedRoom, setSelectedRoom } = useRoomContext();
+const Room = ({ room, lastIndex }: UserSidebarInfo) => {
+    const { selectedRoom, setSelectedRoom, category } = useRoomContext();
     const { onlineUsers } = useSocketContext();
     const { sidebarOpen, setSidebarOpen } = useSidebarContext();
     const { loading, acceptFriendReq, rejectFriendReq } = useFriends();
@@ -90,30 +90,30 @@ const Room = ({ room, lastIndex, category }: UserSidebarInfo) => {
     };
 
     return (
-        <div
-            className={className}
-            onClick={() => {
-                setSelectedRoom(room);
-                if (sidebarOpen) {
-                    handleRoomClick();
-                }
-            }}
-        >
+        <div className={className}>
             {loading ? (
                 <span className="text-center loading loading-spinner loading-xl h-[80px] p-5"></span>
             ) : (
                 <div>
-                    <div className="flex flex-wrap gap-4 items-center rounded p-3 py-2 cursor-pointer">
-                        <div className={onlineStatus}>
-                            <div className="w-14 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                                <img
-                                    src={room.profilePicture}
-                                    alt="user avatar"
-                                />
+                    <div className="flex flex-row flex-wrap justify-between items-center rounded p-3 py-2 cursor-pointer">
+                        <div
+                            className="flex flex-row gap-4 items-center"
+                            onClick={() => {
+                                setSelectedRoom(room);
+                                if (sidebarOpen) {
+                                    handleRoomClick();
+                                }
+                            }}
+                        >
+                            <div className={onlineStatus}>
+                                <div className="w-14 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                    <img
+                                        src={room.profilePicture}
+                                        alt="user avatar"
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex flex-col flex-1 flex-wrap w-full max-w-[120px]">
-                            <p className="font-semibold text-gray-200">
+                            <p className="font-semibold text-gray-200 break-words w-[150px] xs:w-[130px]">
                                 {room.username}
                             </p>
                         </div>

@@ -10,7 +10,6 @@ export const useAuthContext = () => {
 
 export const AuthContextProvider = (props: any) => {
     // @ts-ignore
-
     const localStoreData = localStorage.getItem("auth-user");
     const [authUser, setAuthUser] = useState(
         localStoreData ? JSON.parse(localStoreData) : null

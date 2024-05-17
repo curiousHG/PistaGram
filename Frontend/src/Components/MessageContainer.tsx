@@ -3,7 +3,7 @@ import MessageBody from "./MessageBody.js";
 import { TiMessages } from "react-icons/ti";
 import { useAuthContext } from "../Context/AuthContext.js";
 import { useRoomContext } from "../Context/RoomContext.js";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSidebarContext } from "../Context/SidebarContext.js";
 import { GiHamburgerMenu } from "react-icons/gi";
 import RoomInfo from "./RoomInfo.js";
@@ -36,7 +36,7 @@ const MessageContainer = () => {
     const DefaultViewJSX = () => {
         return (
             <div
-                className="w-full p-2"
+                className="w-full px-2 py-5"
                 onClick={() => {
                     handleOutsideClick();
                 }}
