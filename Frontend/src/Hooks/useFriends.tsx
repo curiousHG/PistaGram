@@ -1,11 +1,9 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { IUser } from "../interfaces";
-import { useRoomContext } from "../Context/RoomContext";
 
 const useFriends = () => {
     const [loading, setLoading] = useState(false);
-    const { selectedRoom } = useRoomContext();
 
     const acceptFriendReq = async (room: IUser) => {
         setLoading(true);
