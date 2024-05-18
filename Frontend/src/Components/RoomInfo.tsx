@@ -5,66 +5,10 @@ import { CiSquareRemove } from "react-icons/ci";
 import { MdOutlineInfo } from "react-icons/md";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import { BsFillCalendarDateFill } from "react-icons/bs";
-import { MdOutlineGroupAdd } from "react-icons/md";
-import { MdGroupRemove } from "react-icons/md";
-import useRequest from "../Hooks/useRequest";
-import { FaUserClock } from "react-icons/fa6";
-import toast from "react-hot-toast";
-import useFriends from "../Hooks/useFriends";
-import useRooms from "../Hooks/useRoom";
 
 const RoomInfo = () => {
-    const { category, selectedRoom, setSelectedRoom } = useRoomContext();
-    const { removeFriend } = useFriends();
+    const { selectedRoom } = useRoomContext();
     const { userInfoPopup, setUserInfoPopup } = useUserInfoContext();
-    const { roomData, setRoomData } = useRooms(category);
-    const { loading, sendRequest, deleteRequest } = useRequest();
-
-    const updateRoomData = (roomId: string, changedStatus: string) => {
-        setRoomData((prevRoomData) =>
-            prevRoomData.map((room) =>
-                room._id === roomId ? { ...room, status: changedStatus } : room
-            )
-        );
-
-        console.log("Room Data", roomData);
-
-        const prevRoom = roomData.find((room) => room._id === roomId);
-        const updatedRoom = { ...prevRoom, status: changedStatus };
-        if (updatedRoom) {
-            setSelectedRoom(updatedRoom);
-        }
-    };
-
-    const handleAddFriend = async () => {
-        const requestStatus = await sendRequest(selectedRoom);
-        if (requestStatus) {
-            toast.success("Request sent sucessfully!!");
-            updateRoomData(selectedRoom._id, "pending");
-        } else {
-            toast.error("Cannot send friend request!");
-        }
-    };
-
-    const handleRemoveRequest = async () => {
-        const requestRemoved = await deleteRequest(selectedRoom);
-        if (requestRemoved) {
-            toast.success("Request removed sucessfully!!");
-            updateRoomData(selectedRoom._id, "not friends");
-        } else {
-            toast.error("Cannot remove request!");
-        }
-    };
-
-    const handleRemoveFriend = async () => {
-        const friendRemoved = await removeFriend();
-        if (friendRemoved) {
-            toast.success("Friend Removed successfully!");
-            updateRoomData(selectedRoom._id, "not friends");
-        } else {
-            toast.error("Cannot remove friend!");
-        }
-    };
 
     if (!userInfoPopup) return;
     else {
@@ -95,30 +39,6 @@ const RoomInfo = () => {
                                     {selectedRoom.lastname}
                                 </p>
                             </div>
-                            <p className="p-3 cursor-pointer rounded-full hover:bg-gray-500 hover:scale-110">
-                                {loading ? (
-                                    <span className="text-center loading loading-spinner loading-xl"></span>
-                                ) : selectedRoom.status === "not friends" ? (
-                                    <MdOutlineGroupAdd
-                                        size={35}
-                                        onClick={() => handleAddFriend()}
-                                    />
-                                ) : selectedRoom.status === "pending" ? (
-                                    <FaUserClock
-                                        size={35}
-                                        onClick={() => {
-                                            handleRemoveRequest();
-                                        }}
-                                    />
-                                ) : (
-                                    <MdGroupRemove
-                                        size={35}
-                                        onClick={() => {
-                                            handleRemoveFriend();
-                                        }}
-                                    />
-                                )}
-                            </p>
                         </div>
                     </div>
                     <div className="flex gap-5 py-2 px-5">
