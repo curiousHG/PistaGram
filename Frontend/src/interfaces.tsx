@@ -6,6 +6,7 @@ export interface IUser {
     profilePicture: string;
     createdAt: string;
     updatedAt: string;
+    status: string;
 }
 
 export interface IMessage {
@@ -34,7 +35,7 @@ export interface IMessageProps {
 export interface UserSidebarInfo {
     room: IUser;
     lastIndex: boolean;
-    category: string;
+    updateRoomData(roomId: string, changedStatus: string): void;
 }
 
 export interface ILogin {
@@ -52,8 +53,4 @@ export interface ISignup {
     username: string;
     email: string;
     password: string;
-}
-
-export interface IRoomsProps {
-    category: string;
 }

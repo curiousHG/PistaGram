@@ -40,7 +40,7 @@ const useRooms = (category: String) => {
         getRoomData();
     }, [category]);
 
-    return { loading, roomData };
+    return { loading, roomData, setRoomData };
 };
 
 export default useRooms;

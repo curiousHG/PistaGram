@@ -8,33 +8,39 @@ import { BsFillCalendarDateFill } from "react-icons/bs";
 import { MdOutlineGroupAdd } from "react-icons/md";
 import { MdGroupRemove } from "react-icons/md";
 import useRequest from "../Hooks/useRequest";
-import { useEffect, useState } from "react";
 import { FaUserClock } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import useFriends from "../Hooks/useFriends";
-import { useSocketContext } from "../Context/SocketContext";
+import useRooms from "../Hooks/useRoom";
 
 const RoomInfo = () => {
-    const { selectedRoom } = useRoomContext();
-    const { userInfoPopup, setUserInfoPopup } = useUserInfoContext();
-    const [friendStatus, setFriendStatus] = useState("Not Friends");
-    const { loading, getRequestStatus, sendRequest, deleteRequest } =
-        useRequest();
-    const { socket } = useSocketContext();
+    const { category, selectedRoom, setSelectedRoom } = useRoomContext();
     const { removeFriend } = useFriends();
+    const { userInfoPopup, setUserInfoPopup } = useUserInfoContext();
+    const { roomData, setRoomData } = useRooms(category);
+    const { loading, sendRequest, deleteRequest } = useRequest();
 
-    useEffect(() => {
-        (async () => {
-            const status = await getRequestStatus(selectedRoom);
-            setFriendStatus(status);
-        })();
-    }, []);
+    const updateRoomData = (roomId: string, changedStatus: string) => {
+        setRoomData((prevRoomData) =>
+            prevRoomData.map((room) =>
+                room._id === roomId ? { ...room, status: changedStatus } : room
+            )
+        );
+
+        console.log("Room Data", roomData);
+
+        const prevRoom = roomData.find((room) => room._id === roomId);
+        const updatedRoom = { ...prevRoom, status: changedStatus };
+        if (updatedRoom) {
+            setSelectedRoom(updatedRoom);
+        }
+    };
 
     const handleAddFriend = async () => {
         const requestStatus = await sendRequest(selectedRoom);
         if (requestStatus) {
             toast.success("Request sent sucessfully!!");
-            setFriendStatus("Pending");
+            updateRoomData(selectedRoom._id, "pending");
         } else {
             toast.error("Cannot send friend request!");
         }
@@ -44,7 +50,7 @@ const RoomInfo = () => {
         const requestRemoved = await deleteRequest(selectedRoom);
         if (requestRemoved) {
             toast.success("Request removed sucessfully!!");
-            setFriendStatus("Not Friends");
+            updateRoomData(selectedRoom._id, "not friends");
         } else {
             toast.error("Cannot remove request!");
         }
@@ -54,7 +60,7 @@ const RoomInfo = () => {
         const friendRemoved = await removeFriend();
         if (friendRemoved) {
             toast.success("Friend Removed successfully!");
-            setFriendStatus("Not Friends");
+            updateRoomData(selectedRoom._id, "not friends");
         } else {
             toast.error("Cannot remove friend!");
         }
@@ -92,12 +98,12 @@ const RoomInfo = () => {
                             <p className="p-3 cursor-pointer rounded-full hover:bg-gray-500 hover:scale-110">
                                 {loading ? (
                                     <span className="text-center loading loading-spinner loading-xl"></span>
-                                ) : friendStatus === "Not Friends" ? (
+                                ) : selectedRoom.status === "not friends" ? (
                                     <MdOutlineGroupAdd
                                         size={35}
                                         onClick={() => handleAddFriend()}
                                     />
-                                ) : friendStatus === "Pending" ? (
+                                ) : selectedRoom.status === "pending" ? (
                                     <FaUserClock
                                         size={35}
                                         onClick={() => {

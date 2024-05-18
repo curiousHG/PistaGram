@@ -53,11 +53,11 @@ const useFriends = () => {
         return false;
     };
 
-    const removeFriend = async () => {
+    const removeFriend = async (room: IUser) => {
         setLoading(true);
 
         try {
-            const res = await fetch(`/api/friends/${selectedRoom._id}`, {
+            const res = await fetch(`/api/friends/${room._id}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

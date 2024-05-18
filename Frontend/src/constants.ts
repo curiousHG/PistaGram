@@ -13,3 +13,17 @@ export const BUTTON_DATA = [
     },
 ];
 
+export const CATEGORY_MAP = [
+    {
+        tab: "discover",
+        status: ["pending", "not friends"],
+    },
+    {
+        tab: "friends",
+        status: ["friends"],
+    },
+    {
+        tab: "pending",
+        status: ["pending"],
+    }
+];

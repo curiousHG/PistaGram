@@ -35,7 +35,7 @@ const Sidebar = () => {
                     ))}
                 </div>
                 <div className="h-full max-h-[500px] overflow-y-auto my-2">
-                    <Rooms category={category} />
+                    <Rooms />
                 </div>
             </div>
             <div className="h-10 my-3">

@@ -31,7 +31,7 @@ const ReceiverInfo = () => {
 
     return (
         <div className="w-full flex flex-row justify-between bg-gray-800 items-center rounded-3xl px-2">
-            <div className="flex items-center xs:w-[80%]">
+            <div className="flex gap-2 items-center w-full xs:w-[80%]">
                 <div
                     className="hidden xs:block p-5"
                     onClick={() => handleHamburgerClick()}
@@ -62,7 +62,7 @@ const ReceiverInfo = () => {
                     handleClearIconClick();
                 }}
             >
-                <CiSquareRemove size={25} />
+                <CiSquareRemove size={35} />
             </div>
         </div>
     );
