@@ -1,5 +1,6 @@
 import Request from "../Models/Request.js";
 import User from "../Models/User.js";
+import { io, getSocketId } from "../socket.js";
 
 export const acceptRequest = async (req, res) => {
     try {
@@ -41,7 +42,35 @@ export const acceptRequest = async (req, res) => {
                     if (deletedRequest.acknowledged) {
                         sender.friends.push(receiverId);
                         receiver.friends.push(senderId);
+
                         Promise.all([sender.save(), receiver.save()]);
+
+                        const senderSocketId = getSocketId(senderId);
+
+                        if (senderSocketId) {
+                            const receiverSocketResult = {
+                                _id: receiver._id,
+                                username: receiver.username,
+                                firstname: receiver.firstname,
+                                lastname: receiver.lastname,
+                                email: receiver.email,
+                                profilePicture: receiver.profilePicture,
+                                createdAt: receiver.createdAt,
+                                updatedAt: receiver.updatedAt,
+                                status: "friends",
+                            };
+                            io.to(senderSocketId).emit(
+                                "request:accept",
+                                receiverSocketResult
+                            );
+                            console.log(
+                                `Sender -> {id - ${receiverId} and username - ${receiver.username}} of friend request was notified about acceptance of friend request from receiver - {id - ${senderId} and username - ${sender.username}}`
+                            );
+                        } else {
+                            console.log(
+                                `Sender -> {id - ${receiverId} and username - ${receiver.username}} does not have an active socket connection!`
+                            );
+                        }
 
                         res.status(201).json({
                             requestAccepted: true,
