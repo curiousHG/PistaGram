@@ -1,5 +1,6 @@
 import Request from "../Models/Request.js";
 import User from "../Models/User.js";
+import { io, getSocketId } from "../socket.js";
 
 export const sendRequest = async (req, res) => {
     try {
@@ -41,6 +42,33 @@ export const sendRequest = async (req, res) => {
                     sender.save(),
                     receiver.save(),
                 ]);
+
+                const receiverSocketId = getSocketId(receiverId);
+
+                if (receiverSocketId) {
+                    const senderSocketResult = {
+                        _id: sender._id,
+                        username: sender.username,
+                        firstname: sender.firstname,
+                        lastname: sender.lastname,
+                        email: sender.email,
+                        profilePicture: sender.profilePicture,
+                        createdAt: sender.createdAt,
+                        updatedAt: sender.updatedAt,
+                        status: "pending",
+                    };
+                    io.to(receiverSocketId).emit(
+                        "request:create",
+                        senderSocketResult
+                    );
+                    console.log(
+                        `Receiver -> {id - ${receiverId} and username - ${receiver.username}} of friend request was notified about friend request from sender - {id - ${senderId} and username - ${sender.username}}`
+                    );
+                } else {
+                    console.log(
+                        `Receiver -> {id - ${receiverId} and username - ${receiver.username}} does not have an active socket connection!`
+                    );
+                }
 
                 res.status(201).json({
                     requestSent: true,

@@ -1,38 +1,45 @@
 import { Server } from "socket.io";
-import http from "http";
+import { createServer } from "http";
 import express from "express";
 import dotenv from "dotenv";
 
 const app = express();
 dotenv.config();
 
-const server = http.createServer(app);
+const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://pistagram.onrender.com/",
+        origin: "http://localhost:5000",
         methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
     },
 });
 
-export const getReceiverSocketId = (receiverId) => {
+const getSocketId = (receiverId) => {
     return userSocketMap[receiverId];
 };
 
 const userSocketMap = {};
 
 io.on("connection", (socket) => {
-    console.log("User connected on - ", socket.id);
-
     const userId = socket.handshake.query.userId;
-    if (userId != "undefined") userSocketMap[userId] = socket.id;
+    if (userId != "undefined") {
+        userSocketMap[userId] = socket.id;
+        console.log(`User with userId - ${userId} connected on - ${socket.id}`);
 
-    io.emit("getOnlineUsers", Object.keys(userSocketMap));
-
-    socket.on("disconnect", () => {
-        console.log("User disconnected from - ", socket.id);
-        delete userSocketMap[userId];
         io.emit("getOnlineUsers", Object.keys(userSocketMap));
-    });
+
+        socket.on("disconnect", () => {
+            console.log(
+                `User with userId - ${userId} disconnected from - ${socket.id} `
+            );
+            delete userSocketMap[userId];
+            io.emit("getOnlineUsers", Object.keys(userSocketMap));
+        });
+    } else {
+        console.log(
+            `Error during socket connection- User's id found to be undefined!`
+        );
+    }
 });
 
-export { app, io, server };
+export { app, io, server, getSocketId };
