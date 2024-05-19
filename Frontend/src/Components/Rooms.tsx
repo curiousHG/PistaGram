@@ -99,12 +99,43 @@ const Rooms = () => {
             );
         };
 
+        const handleRequestRejection = (receiver: IUser) => {
+            if (category === "discover") {
+                updateRoomData(receiver._id, receiver.status);
+            }
+
+            toast.success(
+                `Friend request rejected by ${receiver.firstname} ${receiver.lastname}`
+            );
+        };
+
         socket?.on("request:accept", handleRequestAccept);
+        socket?.on("request:reject", handleRequestRejection);
 
         return () => {
             socket?.off("request:accept", handleRequestAccept);
-            console.log("1");
+            socket?.off("request:rejcet", handleRequestRejection);
         };
+    }, [socket, category, roomData]);
+
+    useEffect(() => {
+        const handleFriendRemoval = (user: IUser) => {
+            if (category === "friends") {
+                updateRoomData(user._id, user.status);
+            } else if (category === "discover") {
+                if (
+                    roomData.find((room) => room._id === user._id) === undefined
+                ) {
+                    setRoomData((prevRoomData) => [...prevRoomData, user]);
+                }
+            }
+            toast.success(
+                `Friendship was removed by ${user.firstname} ${user.lastname}`
+            );
+        };
+
+        socket?.on("friend:remove", handleFriendRemoval);
+        return () => socket?.off("friend:remove", handleFriendRemoval);
     }, [socket, category, roomData]);
 
     return (

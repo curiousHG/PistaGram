@@ -140,6 +140,33 @@ export const rejectRequest = async (req, res) => {
                     if (deletedRequest.acknowledged) {
                         Promise.all([sender.save(), receiver.save()]);
 
+                        const senderSocketId = getSocketId(senderId);
+
+                        if (senderSocketId) {
+                            const receiverSocketResult = {
+                                _id: receiver._id,
+                                username: receiver.username,
+                                firstname: receiver.firstname,
+                                lastname: receiver.lastname,
+                                email: receiver.email,
+                                profilePicture: receiver.profilePicture,
+                                createdAt: receiver.createdAt,
+                                updatedAt: receiver.updatedAt,
+                                status: "not friends",
+                            };
+                            io.to(senderSocketId).emit(
+                                "request:reject",
+                                receiverSocketResult
+                            );
+                            console.log(
+                                `Sender -> {id - ${receiverId} and username - ${receiver.username}} of friend request was notified about rejection of friend request from receiver - {id - ${senderId} and username - ${sender.username}}`
+                            );
+                        } else {
+                            console.log(
+                                `Sender -> {id - ${receiverId} and username - ${receiver.username}} does not have an active socket connection!`
+                            );
+                        }
+
                         res.status(201).json({
                             requestAccepted: true,
                         });
@@ -189,6 +216,33 @@ export const removeFriend = async (req, res) => {
                 friend.friends = filteredFriendsFriend;
 
                 Promise.all([user.save(), friend.save()]);
+
+                const friendSocketId = getSocketId(friendId);
+
+                if (friendSocketId) {
+                    const userSocketResult = {
+                        _id: user._id,
+                        username: user.username,
+                        firstname: user.firstname,
+                        lastname: user.lastname,
+                        email: user.email,
+                        profilePicture: user.profilePicture,
+                        createdAt: user.createdAt,
+                        updatedAt: user.updatedAt,
+                        status: "not friends",
+                    };
+                    io.to(friendSocketId).emit(
+                        "friend:remove",
+                        userSocketResult
+                    );
+                    console.log(
+                        `Friend -> {id - ${friendId} and username - ${friend.username}} was notified about removal of friendship from user - {id - ${userId} and username - ${user.username}}`
+                    );
+                } else {
+                    console.log(
+                        `Friend -> {id - ${friendId} and username - ${friend.username}} does not have an active socket connection!`
+                    );
+                }
 
                 res.status(200).json({
                     friendRemoved: true,

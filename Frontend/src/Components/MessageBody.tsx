@@ -57,8 +57,8 @@ const MessageBody = () => {
         [selectedRoom._id]
     );
 
-    const checkDisabledStatus = (category: string) => {
-        return category === "friends" ? false : true;
+    const checkDisabledStatus = () => {
+        return selectedRoom?.status === "friends" ? false : true;
     };
 
     // Load messages in the room when selectedRoom is changed
@@ -134,7 +134,7 @@ const MessageBody = () => {
                         className="grow"
                         placeholder="Search"
                         value={message}
-                        disabled={loading || checkDisabledStatus(category)}
+                        disabled={loading || checkDisabledStatus()}
                         onChange={(e: any) => {
                             setMessage(e.target.value);
                         }}
