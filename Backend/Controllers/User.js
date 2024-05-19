@@ -62,11 +62,13 @@ export const getAllNonFriends = async (req, res) => {
         const loggedInUserId = req.user._id;
         const user = await User.findById(loggedInUserId)
             .populate("friends")
-            .populate("outgoingFriendsReq");
+            .populate("outgoingFriendsReq")
+            .populate("incomingFriendsReq");
         const friends = user.friends;
         const friends_id = friends.map((friend) => friend._id);
 
         const outgoingFriendsReq = user.outgoingFriendsReq;
+        const incomingFriendsReq = user.incomingFriendsReq;
 
         const nonFriendUsers = await User.find({ _id: { $nin: friends_id } })
             .find({ _id: { $ne: loggedInUserId } })
@@ -83,6 +85,16 @@ export const getAllNonFriends = async (req, res) => {
                     reqFound = true;
                 }
             });
+
+            incomingFriendsReq.forEach((req) => {
+                if (
+                    req.senderId.equals(nonFriend._id) &&
+                    req.receiverId.equals(loggedInUserId)
+                ) {
+                    reqFound = true;
+                }
+            });
+
             const nonFriendResult = {
                 _id: nonFriend._id,
                 firstname: nonFriend.firstname,
