@@ -66,10 +66,7 @@ const Rooms = () => {
             if (category === "discover") {
                 updateRoomData(sender._id, sender.status);
             } else if (category === "pending") {
-                const filteredRoomData = roomData.filter(
-                    (room) => room._id !== sender._id
-                );
-                setRoomData(filteredRoomData);
+                updateRoomData(sender._id, sender.status);
             }
             toast.success(
                 `Friend request removed from ${sender.firstname} ${sender.lastname}`
@@ -83,7 +80,32 @@ const Rooms = () => {
             socket?.off("request:create", handleRequestCreate);
             socket?.off("request:delete", handleRequestDelete);
         };
-    }, [socket, category]);
+    }, [socket, category, roomData]);
+
+    useEffect(() => {
+        const handleRequestAccept = (receiver: IUser) => {
+            if (category === "friends") {
+                if (
+                    roomData.find((room) => room._id === receiver._id) ===
+                    undefined
+                ) {
+                    setRoomData((prevRoomData) => [...prevRoomData, receiver]);
+                }
+            } else if (category === "discover") {
+                updateRoomData(receiver._id, receiver.status);
+            }
+            toast.success(
+                `Friend request accepted by ${receiver.firstname} ${receiver.lastname}`
+            );
+        };
+
+        socket?.on("request:accept", handleRequestAccept);
+
+        return () => {
+            socket?.off("request:accept", handleRequestAccept);
+            console.log("1");
+        };
+    }, [socket, category, roomData]);
 
     return (
         <div
