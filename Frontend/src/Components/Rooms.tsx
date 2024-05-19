@@ -50,16 +50,39 @@ const Rooms = () => {
             if (category === "discover") {
                 updateRoomData(sender._id, sender.status);
             } else if (category === "pending") {
-                setRoomData((prevRoomData) => [...prevRoomData, sender]);
+                if (
+                    roomData.find((room) => room._id === sender._id) ===
+                    undefined
+                ) {
+                    setRoomData((prevRoomData) => [...prevRoomData, sender]);
+                }
             }
             toast.success(
                 `New friend request received from ${sender.firstname} ${sender.lastname}`
             );
         };
 
-        socket?.on("request:create", handleRequestCreate);
+        const handleRequestDelete = (sender: IUser) => {
+            if (category === "discover") {
+                updateRoomData(sender._id, sender.status);
+            } else if (category === "pending") {
+                const filteredRoomData = roomData.filter(
+                    (room) => room._id !== sender._id
+                );
+                setRoomData(filteredRoomData);
+            }
+            toast.success(
+                `Friend request removed from ${sender.firstname} ${sender.lastname}`
+            );
+        };
 
-        return () => socket?.off("request:create", handleRequestCreate);
+        socket?.on("request:create", handleRequestCreate);
+        socket?.on("request:delete", handleRequestDelete);
+
+        return () => {
+            socket?.off("request:create", handleRequestCreate);
+            socket?.off("request:delete", handleRequestDelete);
+        };
     }, [socket, category]);
 
     return (
