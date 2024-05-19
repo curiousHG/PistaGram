@@ -83,7 +83,7 @@ const Room = ({ room, lastIndex, updateRoomData }: UserSidebarInfo) => {
         );
         return categoryMap?.status.find(
             (correctStatus) => correctStatus === status
-        )
+        ) !== undefined
             ? ""
             : "hidden";
     };

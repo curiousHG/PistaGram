@@ -3,13 +3,15 @@ import { useSearchBoxContext } from "../Context/SearchBoxContext";
 import useRooms from "../Hooks/useRoom";
 import Room from "./Room";
 import { useRoomContext } from "../Context/RoomContext";
+import { useSocketContext } from "../Context/SocketContext";
+import { IUser } from "../interfaces";
+import toast from "react-hot-toast";
 const Rooms = () => {
     const { category, selectedRoom, setSelectedRoom } = useRoomContext();
     const { searchBox } = useSearchBoxContext();
     const { loading, roomData, setRoomData } = useRooms(category);
     const [filteredRoomData, setFilteredRoomData] = useState(roomData);
-
-    console.log("RoomData", roomData);
+    const { socket } = useSocketContext();
 
     useEffect(() => {
         if (!loading) {
@@ -41,6 +43,24 @@ const Rooms = () => {
 
     const justifyStyle =
         filteredRoomData.length === 0 ? "justify-center" : "justify-start";
+
+    // Socket
+    useEffect(() => {
+        const handleRequestCreate = (sender: IUser) => {
+            if (category === "discover") {
+                updateRoomData(sender._id, sender.status);
+            } else if (category === "pending") {
+                setRoomData((prevRoomData) => [...prevRoomData, sender]);
+            }
+            toast.success(
+                `New friend request received from ${sender.firstname} ${sender.lastname}`
+            );
+        };
+
+        socket?.on("request:create", handleRequestCreate);
+
+        return () => socket?.off("request:create", handleRequestCreate);
+    }, [socket, category]);
 
     return (
         <div
