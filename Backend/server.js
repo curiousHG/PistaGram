@@ -10,6 +10,7 @@ import requestRouter from "./Routers/Request.js";
 import friendsRouter from "./Routers/Friends.js";
 import path from "path";
 import client from "prom-client";
+import responseTime from "response-time";
 
 // Server Configs
 dotenv.config();
@@ -20,6 +21,34 @@ const PORT = process.env.PORT || 8000;
 // Prometheus client
 const collectDefaultMetrics = client.collectDefaultMetrics;
 collectDefaultMetrics({ register: client.register });
+
+const requestResponseTime = new client.Histogram({
+    name: "http_express_req_res_time",
+    help: "How much time is taken in request response",
+    labelNames: ["method", "route", "status_code"],
+    buckets: [
+        1, 50, 100, 200, 400, 500, 800, 1000, 2000, 3000, 4000, 5000, 6000,
+        7000, 8000, 9000, 10000,
+    ],
+});
+
+const totalRequestCounter = new client.Counter({
+    name: "total_requests",
+    help: "Counts total request on the server",
+});
+
+app.use(
+    responseTime((req, res, time) => {
+        totalRequestCounter.inc();
+        requestResponseTime
+            .labels({
+                method: req.method,
+                route: req.url,
+                status_code: res.statusCode,
+            })
+            .observe(time);
+    })
+);
 
 const __dirname = path.resolve();
 
