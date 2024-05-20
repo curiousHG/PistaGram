@@ -64,6 +64,7 @@ export const getAllNonFriends = async (req, res) => {
             .populate("friends")
             .populate("outgoingFriendsReq")
             .populate("incomingFriendsReq");
+
         const friends = user.friends;
         const friends_id = friends.map((friend) => friend._id);
 
