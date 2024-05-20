@@ -9,6 +9,7 @@ import { app, server } from "./socket.js";
 import requestRouter from "./Routers/Request.js";
 import friendsRouter from "./Routers/Friends.js";
 import path from "path";
+import client from "prom-client";
 
 // Server Configs
 dotenv.config();
@@ -16,12 +17,23 @@ app.use(express.json());
 app.use(cookieParser());
 const PORT = process.env.PORT || 8000;
 
+// Prometheus client
+const collectDefaultMetrics = client.collectDefaultMetrics;
+collectDefaultMetrics({ register: client.register });
+
 const __dirname = path.resolve();
 
 app.use(express.static(path.join(__dirname, "Frontend", "dist")));
 
 app.get("/", (req, res) => {
     res.send("Server is runnning");
+});
+
+app.get("/metrics", async (req, res) => {
+    res.setHeader("Content-Type", client.register.contentType);
+
+    const metrics = await client.register.metrics();
+    res.send(metrics);
 });
 
 // Route Handlers
