@@ -11,12 +11,27 @@ import friendsRouter from "./Routers/Friends.js";
 import path from "path";
 import client from "prom-client";
 import responseTime from "response-time";
+import { createLogger, transports } from "winston";
+import LokiTransport from "winston-loki";
 
 // Server Configs
 dotenv.config();
 app.use(express.json());
 app.use(cookieParser());
 const PORT = process.env.PORT || 8000;
+
+const options = {
+    labels: {
+        appName: "pistagram-server",
+    },
+    transports: [
+        new LokiTransport({
+            host: "http://127.0.0.1:3100",
+        }),
+    ],
+};
+
+const LOGGER = createLogger(options);
 
 // Prometheus client
 const collectDefaultMetrics = client.collectDefaultMetrics;
@@ -55,10 +70,12 @@ const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "Frontend", "dist")));
 
 app.get("/", (req, res) => {
+    LOGGER.info("Request came on route / ");
     res.send("Server is runnning");
 });
 
 app.get("/metrics", async (req, res) => {
+    LOGGER.info("Request came on route /metrics");
     res.setHeader("Content-Type", client.register.contentType);
 
     const metrics = await client.register.metrics();
@@ -73,6 +90,7 @@ app.use("/api/request", requestRouter);
 app.use("/api/friends", friendsRouter);
 
 app.get("*", (req, res) => {
+    LOGGER.info("Request came to get frontend build files");
     res.sendFile(path.join(__dirname, "Frontend", "dist", "index.html"));
 });
 
