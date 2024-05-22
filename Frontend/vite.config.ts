@@ -10,7 +10,7 @@ export default defineConfig({
     port: 5000,
     proxy: {
       "/api": {
-        target: "https://pistagram.onrender.com/",
+        target: "http://127.0.0.1/",
       }
     }
   }
