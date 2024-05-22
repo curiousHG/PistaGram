@@ -9,7 +9,7 @@ dotenv.config();
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "https://ec2-16-171-129-124.eu-north-1.compute.amazonaws.com/",
+        origin: "https://ec2-16-171-129-124.eu-north-1.compute.amazonaws.com",
         methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
     },
 });
