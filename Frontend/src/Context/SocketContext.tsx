@@ -17,7 +17,7 @@ export const SocketContextProvider = (props: any) => {
 
     useEffect(() => {
         if (authUser) {
-            const socket = io("https://pistagram.onrender.com/", {
+            const socket = io("http://127.0.0.1/", {
                 query: {
                     userId: authUser._id,
                 },
