@@ -17,7 +17,7 @@ export const SocketContextProvider = (props: any) => {
 
     useEffect(() => {
         if (authUser) {
-            const socket = io("http://127.0.0.1/", {
+            const socket = io("http://172.31.40.22/", {
                 query: {
                     userId: authUser._id,
                 },
