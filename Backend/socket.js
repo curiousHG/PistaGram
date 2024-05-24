@@ -9,7 +9,7 @@ dotenv.config();
 const server = createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://172.31.40.22",
+        origin: "http://13.201.45.217",
         methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
     },
 });
