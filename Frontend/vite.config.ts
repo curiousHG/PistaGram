@@ -10,7 +10,7 @@ export default defineConfig({
     port: 5000,
     proxy: {
       "/api": {
-        target: "http://172.31.40.22/",
+        target: "http://13.201.45.217/",
       }
     }
   }
