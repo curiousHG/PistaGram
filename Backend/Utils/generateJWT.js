@@ -9,7 +9,7 @@ const generateJWT = (userId, res) => {
         maxAge: 5 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: "strict",
-        secure: process.env.ENVIRONMENT !== "development",
+        secure: false,
     });
 };
 
