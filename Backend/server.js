@@ -1,24 +1,25 @@
-import express from "express";
+import path from "path";
 import dotenv from "dotenv";
-import authenticationRouter from "./Routers/Authentication.js";
-import connectMongoDB from "./Database-Drivers/connectMonogoDB.js";
-import messagingRouter from "./Routers/Message.js";
+import express from "express";
+import client from "prom-client";
+import LokiTransport from "winston-loki";
 import cookieParser from "cookie-parser";
-import userRouter from "./Routers/User.js";
+import responseTime from "response-time";
 import { app, server } from "./socket.js";
+import userRouter from "./Routers/User.js";
+import {
+    requestResponseTimeCycle,
+    totalRequestCounter,
+} from "./Prometheus-Metrics/request-metrics.js";
 import requestRouter from "./Routers/Request.js";
 import friendsRouter from "./Routers/Friends.js";
-import path from "path";
-import client from "prom-client";
-import responseTime from "response-time";
 import { createLogger, transports } from "winston";
-import LokiTransport from "winston-loki";
+import messagingRouter from "./Routers/Message.js";
+import authenticationRouter from "./Routers/Authentication.js";
+import connectMongoDB from "./Database-Drivers/connectMonogoDB.js";
 
 // Server Configs
 dotenv.config();
-app.use(express.json());
-app.use(cookieParser());
-const PORT = process.env.PORT || 8000;
 
 const options = {
     labels: {
@@ -26,36 +27,25 @@ const options = {
     },
     transports: [
         new LokiTransport({
-            host: "https://16.171.129.124/:3100",
+            host: "http://localhost:3100",
         }),
     ],
 };
 
-const LOGGER = createLogger(options);
+const __dirname = path.resolve();
+export const LOGGER = createLogger(options);
+const PORT = process.env.PORT || 8000;
 
-// Prometheus client
 const collectDefaultMetrics = client.collectDefaultMetrics;
 collectDefaultMetrics({ register: client.register });
 
-const requestResponseTime = new client.Histogram({
-    name: "http_express_req_res_time",
-    help: "How much time is taken in request response",
-    labelNames: ["method", "route", "status_code"],
-    buckets: [
-        1, 50, 100, 200, 400, 500, 800, 1000, 2000, 3000, 4000, 5000, 6000,
-        7000, 8000, 9000, 10000,
-    ],
-});
-
-const totalRequestCounter = new client.Counter({
-    name: "total_requests",
-    help: "Counts total request on the server",
-});
-
+// Middlewares for prometheus, json and cookies
+app.use(express.json());
+app.use(cookieParser());
 app.use(
     responseTime((req, res, time) => {
         totalRequestCounter.inc();
-        requestResponseTime
+        requestResponseTimeCycle
             .labels({
                 method: req.method,
                 route: req.url,
@@ -64,9 +54,6 @@ app.use(
             .observe(time);
     })
 );
-
-const __dirname = path.resolve();
-
 app.use(express.static(path.join(__dirname, "Frontend", "dist")));
 
 app.get("/", (req, res) => {
