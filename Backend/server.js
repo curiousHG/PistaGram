@@ -7,10 +7,6 @@ import cookieParser from "cookie-parser";
 import responseTime from "response-time";
 import { app, server } from "./socket.js";
 import userRouter from "./Routers/User.js";
-import {
-    requestResponseTimeCycle,
-    totalRequestCounter,
-} from "./Prometheus-Metrics/request-metrics.js";
 import requestRouter from "./Routers/Request.js";
 import friendsRouter from "./Routers/Friends.js";
 import { createLogger, transports } from "winston";
@@ -42,10 +38,23 @@ collectDefaultMetrics({ register: client.register });
 // Middlewares for prometheus, json and cookies
 app.use(express.json());
 app.use(cookieParser());
+
+const totalRequestCounter = new client.Counter({
+    name: "total_requests",
+    help: "Counts total requests landed on the server",
+});
+
+const requestResponseTime = new client.Histogram({
+    name: "http_express_request_response_time",
+    help: "Time to serve a request by express server in ms",
+    labelNames: ["method", "route", "status_code"],
+    buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10, 20, 40, 80, 200, 500, 1000],
+});
+
 app.use(
     responseTime((req, res, time) => {
         totalRequestCounter.inc();
-        requestResponseTimeCycle
+        requestResponseTime
             .labels({
                 method: req.method,
                 route: req.url,
