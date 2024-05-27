@@ -35,10 +35,6 @@ const PORT = process.env.PORT || 8000;
 const collectDefaultMetrics = client.collectDefaultMetrics;
 collectDefaultMetrics({ register: client.register });
 
-// Middlewares for prometheus, json and cookies
-app.use(express.json());
-app.use(cookieParser());
-
 const totalRequestCounter = new client.Counter({
     name: "total_requests",
     help: "Counts total requests landed on the server",
@@ -50,6 +46,10 @@ const requestResponseTime = new client.Histogram({
     labelNames: ["method", "route", "status_code"],
     buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10, 20, 40, 80, 200, 500, 1000],
 });
+
+// Middlewares for prometheus, json and cookies
+app.use(express.json());
+app.use(cookieParser());
 
 app.use(
     responseTime((req, res, time) => {
@@ -63,6 +63,7 @@ app.use(
             .observe(time);
     })
 );
+
 app.use(express.static(path.join(__dirname, "Frontend", "dist")));
 
 app.get("/", (req, res) => {
