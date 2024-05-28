@@ -1,5 +1,5 @@
-import Request from "../Models/Request.js";
 import User from "../Models/User.js";
+import { LOGGER } from "../server.js";
 
 export const getAllUsers = async (req, res) => {
     try {
@@ -17,11 +17,18 @@ export const getAllUsers = async (req, res) => {
             allUsersResult.push(userResult);
         });
 
+        LOGGER.info(
+            `Get All Users controller - Sent all users back to User - { _id - ${loggedInUserId} }`
+        );
+
         return res.status(200).json(allUsersResult);
     } catch (error) {
-        console.log("Error in Get All Users Controller: ", error.message);
+        LOGGER.error(
+            `Get All Users controller - ${error.name} occurred during getting all users - ${error.message}`
+        );
+
         res.status(500).json({
-            error: "Server Error: Internal error occurred during getting users!",
+            error: `${error.name} occurred during getting all users - ${error.message}`,
         });
     }
 };
@@ -48,11 +55,18 @@ export const getAllFriends = async (req, res) => {
             friendsResultArr.push(friendResult);
         });
 
+        LOGGER.info(
+            `Get All Friends controller - Sent all friends back to User - { _id - ${loggedInUserId} }`
+        );
+
         return res.status(200).json(friendsResultArr);
     } catch (error) {
-        console.log("Error in Get Friends Controller: ", error.message);
+        LOGGER.error(
+            `Get All Friends controller - ${error.name} occurred during getting all friends - ${error.message}`
+        );
+
         res.status(500).json({
-            error: "Server Error: Internal error occurred during getting users!",
+            error: `${error.name} occurred during getting all friends - ${error.message}`,
         });
     }
 };
@@ -74,6 +88,7 @@ export const getAllNonFriends = async (req, res) => {
         const nonFriendUsers = await User.find({ _id: { $nin: friends_id } })
             .find({ _id: { $ne: loggedInUserId } })
             .select("-password");
+
         const nonFriendsResultArr = [];
         nonFriendUsers.forEach((nonFriend) => {
             let reqFound = false;
@@ -110,11 +125,18 @@ export const getAllNonFriends = async (req, res) => {
             nonFriendsResultArr.push(nonFriendResult);
         });
 
+        LOGGER.info(
+            `Get All Non Friends controller - Sent all non friends back to User - { _id - ${loggedInUserId} }`
+        );
+
         return res.status(200).json(nonFriendsResultArr);
     } catch (error) {
-        console.log("Error in Get All Non Friends Controller: ", error.message);
+        LOGGER.error(
+            `Get All Non Friends controller - ${error.name} occurred during getting all non friends - ${error.message}`
+        );
+
         res.status(500).json({
-            error: "Server Error: Internal error occurred during getting users!",
+            error: `${error.name} occurred during getting all non friends - ${error.message}`,
         });
     }
 };
@@ -153,14 +175,18 @@ export const getPendingReqUsers = async (req, res) => {
             incomingRequestResult.push(incomingRequest);
         });
 
+        LOGGER.info(
+            `Get All Pending Request Users controller - Sent all pending requst users back to User - { _id - ${loggedInUserId} }`
+        );
+
         res.status(200).json(incomingRequestResult);
     } catch (error) {
-        console.log(
-            "Error occurred during getting pending request users",
-            error.message
+        LOGGER.error(
+            `Get All Pending Request Users controller - ${error.name} occurred during getting all pending requst users - ${error.message}`
         );
-        throw new Error({
-            error: "Error occurred during getting pending request users!",
+
+        res.status(500).json({
+            error: `${error.name} occurred during getting all pending requst users - ${error.message}`,
         });
     }
 };
