@@ -100,10 +100,10 @@ export const acceptRequest = async (req, res) => {
                         });
                     } else {
                         LOGGER.error(
-                            `Accept Request controller - Friend request acceptance aborte due to cannot remove friend request { _id : ${request.id}}`
+                            `Accept Request controller - Friend request acceptance aborted due to cannot remove friend request { _id : ${request.id}}`
                         );
                         throw new Error(
-                            `Accept Request request acceptance aborte due to cannot remove friend request { _id : ${request.id}}`
+                            `Accept Request request acceptance aborted due to cannot remove friend request { _id : ${request.id}}`
                         );
                     }
                 } else {
@@ -146,6 +146,10 @@ export const rejectRequest = async (req, res) => {
         const { id: senderId } = req.params;
         const receiverId = req.user._id;
 
+        LOGGER.info(
+            `Reject Request controller - Received request removal request from User - { _id - ${senderId} } - User - { _id - ${receiverId} }`
+        );
+
         const request = await Request.findOne({
             senderId: senderId,
             receiverId: receiverId,
@@ -157,6 +161,9 @@ export const rejectRequest = async (req, res) => {
                 const sender = await User.findById(senderId);
 
                 if (sender) {
+                    LOGGER.info(
+                        `Reject Request controller - Sender-Receiver validation successfull, now processing request further`
+                    );
                     // Remove requestId from receiver incoming requests
                     const filteredIncomingReq =
                         receiver.incomingFriendsReq.filter(
@@ -178,12 +185,24 @@ export const rejectRequest = async (req, res) => {
                         receiverId: receiverId,
                     });
 
+                    LOGGER.info(
+                        `Reject Request controller - Removed request object from sender-receiver friend request entry and deleted request { _id : ${request._id} } from db`
+                    );
+
                     if (deletedRequest.acknowledged) {
                         Promise.all([sender.save(), receiver.save()]);
+
+                        LOGGER.info(
+                            `Reject Request controller - Rejected friend request from Sender - { _id - ${senderId} } to Receiver - { _id - ${receiverId} }`
+                        );
 
                         const senderSocketId = getSocketId(senderId);
 
                         if (senderSocketId) {
+                            LOGGER.info(
+                                `Reject Request controller - Sending socket event - { name - request:reject } back to Sender { _id - ${senderId}, socketId - ${senderSocketId}} of request`
+                            );
+
                             const receiverSocketResult = {
                                 _id: receiver._id,
                                 username: receiver.username,
@@ -199,12 +218,12 @@ export const rejectRequest = async (req, res) => {
                                 "request:reject",
                                 receiverSocketResult
                             );
-                            console.log(
-                                `Sender -> {id - ${receiverId} and username - ${receiver.username}} of friend request was notified about rejection of friend request from receiver - {id - ${senderId} and username - ${sender.username}}`
+                            LOGGER.info(
+                                `Reject Request controller - Sender -> {id - ${receiverId} and username - ${receiver.username}} of friend request was notified about rejection of friend request from receiver - {id - ${senderId} and username - ${sender.username}}`
                             );
                         } else {
-                            console.log(
-                                `Sender -> {id - ${receiverId} and username - ${receiver.username}} does not have an active socket connection!`
+                            LOGGER.warn(
+                                `Reject Request controller - Sender -> {id - ${receiverId} and username - ${receiver.username}} does not have an active socket connection!`
                             );
                         }
 
@@ -212,18 +231,37 @@ export const rejectRequest = async (req, res) => {
                             requestAccepted: true,
                         });
                     } else {
+                        LOGGER.error(
+                            `Reject Request controller - Friend request rejection aborted due to cannot remove friend request { _id : ${request.id}}`
+                        );
                         throw new Error(
-                            "Request cannot be deleted from database!"
+                            `Reject Request request rejection aborted due to cannot remove friend request { _id : ${request.id}}`
                         );
                     }
                 } else {
-                    throw new Error("Sender was not found in database!");
+                    LOGGER.error(
+                        `Reject Request controller - Sender { _id - ${senderId} } of Request - { _id - ${request._id} } does not exists`
+                    );
+                    throw new Error(
+                        `Sender { _id - ${senderId} } of Request - { _id - ${request._id} } does not exists`
+                    );
                 }
             } else {
-                throw new Error("Receiver was not found in database!");
+                LOGGER.error(
+                    `Reject Request controller - Receiver { _id - ${receiverId} } of Request - { _id - ${request._id} } does not exists`
+                );
+                throw new Error(
+                    `Receiver { _id - ${receiverId} } of Request - { _id - ${request._id} } does not exists`
+                );
             }
         } else {
-            throw new Error("No request found for receiver");
+            LOGGER.error(
+                `Reject Request controller - Request from Sender - { _id - ${senderId} } to Receiver - { _id - ${receiverId}} does not exists`
+            );
+
+            throw new Error(
+                `Request from Sender - { _id - ${senderId} } to Receiver - { _id - ${receiverId}} does not exists`
+            );
         }
     } catch (error) {
         LOGGER.error(
@@ -269,7 +307,7 @@ export const removeFriend = async (req, res) => {
 
                 if (friendSocketId) {
                     LOGGER.info(
-                        `Remove Friend controller - Sending socket event - { name - friend:remove } back to Friend { _id - ${friendId}, socketId - ${friendSocketId}} of request`
+                        `Remove Friend controller - Sending socket event - { name - friend:remove } back to Ex-friend { _id - ${friendId}, socketId - ${friendSocketId}} of request`
                     );
 
                     const userSocketResult = {
@@ -288,11 +326,11 @@ export const removeFriend = async (req, res) => {
                         userSocketResult
                     );
                     LOGGER.info(
-                        `Remove Friend controller - Friend -> { _id - ${friendId} and username - ${friend.username}} was notified about removal of friendship from user - { _id - ${userId} and username - ${user.username}}`
+                        `Remove Friend controller - Friend -> { _id - ${friendId}, username - ${friend.username}} was notified about removal of friendship from user - { _id - ${userId}, username - ${user.username}}`
                     );
                 } else {
                     LOGGER.warn(
-                        `Remove Friend controller - Friend -> {id - ${friendId} and username - ${friend.username}} does not have an active socket connection!`
+                        `Remove Friend controller - Friend -> { _id - ${friendId}, username - ${friend.username}} does not have an active socket connection!`
                     );
                 }
 
