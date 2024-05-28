@@ -23,7 +23,7 @@ const options = {
     },
     transports: [
         new LokiTransport({
-            host: "http://localhost:3100",
+            host: "192.168.0.106:3100",
         }),
     ],
 };
@@ -66,6 +66,7 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "Frontend", "dist")));
 
+// Route Handlers
 app.get("/", (req, res) => {
     LOGGER.info("Request came on route / ");
     res.send("Server is runnning");
@@ -79,7 +80,6 @@ app.get("/metrics", async (req, res) => {
     res.send(metrics);
 });
 
-// Route Handlers
 app.use("/api/auth", authenticationRouter);
 app.use("/api/users", userRouter);
 app.use("/api/messages", messagingRouter);
