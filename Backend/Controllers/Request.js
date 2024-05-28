@@ -1,5 +1,6 @@
-import Request from "../Models/Request.js";
 import User from "../Models/User.js";
+import { LOGGER } from "../server.js";
+import Request from "../Models/Request.js";
 import { io, getSocketId } from "../socket.js";
 
 export const sendRequest = async (req, res) => {
@@ -10,12 +11,22 @@ export const sendRequest = async (req, res) => {
         const sender = await User.findById(senderId);
         const receiver = await User.findById(receiverId);
 
+        LOGGER.info(
+            `Send Request controller - Received request to send friend request to User - { _id - ${receiverId} } from User - { _id - ${senderId} }`
+        );
+
         if (!sender) {
-            throw new Error("Sender was not found in database! Login Again!");
+            LOGGER.error(
+                `Send Request Controller - Sender { _id - ${senderId} } does not exists`
+            );
+            throw new Error(`Sender { _id - ${senderId} } does not exists`);
         }
 
         if (!receiver) {
-            throw new Error("Receiver was not found in database! Refresh");
+            LOGGER.error(
+                `Send Request Controller - Receiver { _id - ${receiverId} } does not exists`
+            );
+            throw new Error(`Receiver { _id - ${receiverId} } does not exists`);
         }
 
         // Check for duplicate req.
@@ -25,7 +36,12 @@ export const sendRequest = async (req, res) => {
         });
 
         if (request) {
-            throw new Error("Request already exists!!");
+            LOGGER.error(
+                `Send Request Controller - Request between Sender - { _id - ${senderId}} and Receiver { _id - ${receiverId} } already exists`
+            );
+            throw new Error(
+                `Request between Sender - { _id - ${senderId}} and Receiver { _id - ${receiverId} } already exists`
+            );
         } else {
             const newRequestData = {
                 senderId: senderId,
@@ -57,16 +73,19 @@ export const sendRequest = async (req, res) => {
                         updatedAt: sender.updatedAt,
                         status: "pending",
                     };
+                    LOGGER.info(
+                        `Send Request Controller - Web socket event { name - request:create} sent to Receiver -> { _id - ${receiverId}, username - ${receiver.username} } of friend request`
+                    );
                     io.to(receiverSocketId).emit(
                         "request:create",
                         senderSocketResult
                     );
-                    console.log(
-                        `Receiver -> {id - ${receiverId} and username - ${receiver.username}} of friend request was notified about friend request from sender - {id - ${senderId} and username - ${sender.username}}`
+                    LOGGER.info(
+                        `Send Request Controller - Receiver -> { _id - ${receiverId}, username - ${receiver.username} } of friend request was notified about friend request from sender - {id - ${senderId} and username - ${sender.username}}`
                     );
                 } else {
-                    console.log(
-                        `Receiver -> {id - ${receiverId} and username - ${receiver.username}} does not have an active socket connection!`
+                    LOGGER.warn(
+                        `Send Request Controller - Receiver -> { _id - ${receiverId}, username - ${receiver.username} } does not have an active socket connection!`
                     );
                 }
 
@@ -74,13 +93,21 @@ export const sendRequest = async (req, res) => {
                     requestSent: true,
                 });
             } else {
-                throw new Error("Cannot send request please try again!");
+                LOGGER.error(
+                    `Send Request Controller - Request between Sender - { _id - ${senderId}} and Receiver { _id - ${receiverId} } cannot be sent`
+                );
+                throw new Error(
+                    `Request between Sender - { _id - ${senderId}} and Receiver { _id - ${receiverId} } cannot be sent`
+                );
             }
         }
     } catch (error) {
-        console.log("Error in Make Request Controller: ", error.message);
+        LOGGER.error(
+            `Send Request controller - ${error.name} occurred during sending request - ${error.message}`
+        );
+
         res.status(500).json({
-            error: "Server Error: Interval error occurred during sending request!",
+            error: `${error.name} occurred during sending request - ${error.message}`,
         });
     }
 };
@@ -90,15 +117,25 @@ export const deleteReq = async (req, res) => {
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
 
+        LOGGER.info(
+            `Delete Request controller - Received request to delete friend request to User - { _id - ${receiverId} } from User - { _id - ${senderId} }`
+        );
+
         const sender = await User.findById(senderId);
         const receiver = await User.findById(receiverId);
 
         if (!sender) {
-            throw new Error("Sender was not found in database! Login Again!");
+            LOGGER.error(
+                `Delete Request Controller - Sender { _id - ${senderId} } does not exists`
+            );
+            throw new Error(`Sender { _id - ${senderId} } does not exists`);
         }
 
         if (!receiver) {
-            throw new Error("Receiver was not found in database! Refresh");
+            LOGGER.error(
+                `Delete Request Controller - Receiver { _id - ${receiverId} } does not exists`
+            );
+            throw new Error(`Receiver { _id - ${receiverId} } does not exists`);
         }
 
         // Check for request
@@ -122,7 +159,13 @@ export const deleteReq = async (req, res) => {
                 senderId: senderId,
                 receiverId: receiverId,
             });
+
             Promise.all([sender.save(), receiver.save()]);
+
+            LOGGER.info(
+                `Delete Request - Deleted the request from  User - { _id - ${senderId} } to User - { _id - ${receiverId} }`
+            );
+
             if (deletedReq.acknowledged) {
                 const receiverSocketId = getSocketId(receiverId);
 
@@ -138,16 +181,19 @@ export const deleteReq = async (req, res) => {
                         updatedAt: sender.updatedAt,
                         status: "not friends",
                     };
+                    LOGGER.info(
+                        `Delete Request controller -  Sending deleted request event { name - request:delete} to receiver - { _id - ${receiverId} }`
+                    );
                     io.to(receiverSocketId).emit(
                         "request:delete",
                         senderSocketResult
                     );
-                    console.log(
-                        `Receiver -> {id - ${receiverId} and username - ${receiver.username}} of friend request was notified about removal of request from sender - {id - ${senderId} and username - ${sender.username}}`
+                    LOGGER.info(
+                        `Delete Request controller - Receiver -> {id - ${receiverId} and username - ${receiver.username}} of friend request was notified about removal of request from sender - {id - ${senderId} and username - ${sender.username}}`
                     );
                 } else {
-                    console.log(
-                        `Receiver -> {id - ${receiverId} and username - ${receiver.username}} does not have an active socket connection!`
+                    LOGGER.warn(
+                        `Delete Request controller - Receiver -> {id - ${receiverId} and username - ${receiver.username}} does not have an active socket connection!`
                     );
                 }
 
@@ -155,17 +201,29 @@ export const deleteReq = async (req, res) => {
                     requestRemoved: true,
                 });
             } else {
+                LOGGER.error(
+                    `Delete Request controller -  Cannot delete the request between User - { _id - ${senderId}} and User - { _id - ${receiverId} }`
+                );
+                
                 res.status(200).json({
                     requestRemoved: false,
                 });
             }
         } else {
-            throw Error("Request between users not found!!");
+            LOGGER.error(
+                `Delete Request Controller - Request between Sender - { _id - ${senderId}} and Receiver { _id - ${receiverId} } cannot be deleted`
+            );
+            throw new Error(
+                `Request between Sender - { _id - ${senderId}} and Receiver { _id - ${receiverId} } cannot be deleted`
+            );
         }
     } catch (error) {
-        console.log("Error in Delete Request Controller: ", error.message);
+        LOGGER.error(
+            `Delete Request controller - ${error.name} occurred during deleting request - ${error.message}`
+        );
+
         res.status(500).json({
-            error: "Server Error: Internal error occurred during deleting request!",
+            error: `${error.name} occurred during deleting request - ${error.message}`,
         });
     }
 };
@@ -176,12 +234,20 @@ export const getRequestStatus = async (req, res) => {
         const userId = req.user._id;
         const user = await User.findById(userId);
 
+        LOGGER.info(
+            `Get Request Status controller - Received request to get request status between User - { _id - ${receiverId} } and User - { _id - ${userId} }`
+        );
+
         if (user) {
             const friends = user.friends;
             const acceptedReceiversId = friends.find((id) =>
                 id.equals(receiverId)
             );
             if (acceptedReceiversId) {
+                LOGGER.info(
+                    `Get Request Status controller - Request between User - { _id - ${receiverId} } and User - { _id -${userId} } does not exists, status is friends`
+                );
+
                 res.status(200).json({
                     relStatus: "Friends",
                 });
@@ -196,6 +262,10 @@ export const getRequestStatus = async (req, res) => {
                         receiverId: userId,
                     }));
 
+                LOGGER.debug(
+                    `Get Request Status controller - Request between User - { _id - ${receiverId} } and User - { _id -${userId} } exists, status could be pending or not friends`
+                );
+
                 if (request) {
                     res.status(200).json({
                         relStatus: "Pending",
@@ -207,10 +277,18 @@ export const getRequestStatus = async (req, res) => {
                 }
             }
         } else {
-            throw new Error("User not found in Db!");
+            LOGGER.error(
+                `Get Request Status controller - User { _id - ${userId}} does not exists`
+            );
+            throw new Error(`User { _id - ${userId}} does not exists`);
         }
     } catch (error) {
-        console.log("Error occurred during status request!");
-        throw new Error("Error occurred during status", error.message);
+        LOGGER.error(
+            `Get Request Status controller - ${error.name} occurred during getting request status - ${error.message}`
+        );
+
+        res.status(500).json({
+            error: `${error.name} occurred during getting request status - ${error.message}`,
+        });
     }
 };
