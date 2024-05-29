@@ -1,5 +1,6 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
+import { LOGGER } from "../server.js";
 
 dotenv.config();
 
@@ -11,11 +12,17 @@ const connectMongoDB = async () => {
         console.log(
             `Connection Successfull: Handshake with MONGO DB executed succesfully!`
         );
-    } catch (error) {
-        console.log(
-            "Connection Unsuccessfull: Handshake with MONGO DB failed!",
-            error.message
+        LOGGER.info(
+            `CONNECTION MONGODB - Handshake with MONGO DB { URI - ${MONGO_DB_URI} } executed succesfully!`
         );
+    } catch (error) {
+        LOGGER.error(
+            `CONNECTION MONGODB - ${error.name} occurred during connecting to mongodb - ${error.message}`
+        );
+
+        res.status(500).json({
+            error: `${error.name} occurred during connecting to mongodb - ${error.message}`,
+        });
     }
 };
 
