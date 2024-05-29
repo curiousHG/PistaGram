@@ -2,6 +2,7 @@ import path from "path";
 import dotenv from "dotenv";
 import express from "express";
 import client from "prom-client";
+import { createLogger } from "winston";
 import LokiTransport from "winston-loki";
 import cookieParser from "cookie-parser";
 import responseTime from "response-time";
@@ -9,7 +10,7 @@ import { app, server } from "./socket.js";
 import userRouter from "./Routers/User.js";
 import requestRouter from "./Routers/Request.js";
 import friendsRouter from "./Routers/Friends.js";
-import { createLogger, transports } from "winston";
+import { lokiLogger } from "./Utils/lokiLogger.js";
 import messagingRouter from "./Routers/Message.js";
 import authenticationRouter from "./Routers/Authentication.js";
 import connectMongoDB from "./Database-Drivers/connectMonogoDB.js";
@@ -41,7 +42,7 @@ const totalRequestCounter = new client.Counter({
 });
 
 const requestResponseTime = new client.Histogram({
-    name: "http_express_request_response_time",
+    name: "request_response_time",
     help: "Time to serve a request by express server in ms",
     labelNames: ["method", "route", "status_code"],
     buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10, 20, 40, 80, 200, 500, 1000],
@@ -67,24 +68,22 @@ app.use(
 app.use(express.static(path.join(__dirname, "Frontend", "dist")));
 
 // Route Handlers
-app.get("/", (req, res) => {
-    LOGGER.info("Request came on route / ");
+app.get("/", lokiLogger("/"), (req, res) => {
     res.send("Server is runnning");
 });
 
-app.get("/metrics", async (req, res) => {
-    LOGGER.info("Request came on route /metrics");
+app.get("/metrics", lokiLogger("/metrics"), async (req, res) => {
     res.setHeader("Content-Type", client.register.contentType);
 
     const metrics = await client.register.metrics();
     res.send(metrics);
 });
 
-app.use("/api/auth", authenticationRouter);
-app.use("/api/users", userRouter);
-app.use("/api/messages", messagingRouter);
-app.use("/api/request", requestRouter);
-app.use("/api/friends", friendsRouter);
+app.use("/api/auth", lokiLogger("/api/auth"), authenticationRouter);
+app.use("/api/users", lokiLogger("/api/users"), userRouter);
+app.use("/api/messages", lokiLogger("/api/messages"), messagingRouter);
+app.use("/api/request", lokiLogger("/api/request"), requestRouter);
+app.use("/api/friends", lokiLogger("/api/friends"), friendsRouter);
 
 app.get("*", (req, res) => {
     LOGGER.info("Request came to get frontend build files");
@@ -93,6 +92,9 @@ app.get("*", (req, res) => {
 
 // Start Server on default PORT
 server.listen(PORT, async () => {
+    console.log(`Running on PORT -> ${PORT} now connecting to MONGODB`);
+    LOGGER.info(
+        `Server - Running on PORT -> ${PORT} now connecting to MONGODB`
+    );
     await connectMongoDB();
-    console.log(`Running on PORT -> ${PORT}`);
 });
