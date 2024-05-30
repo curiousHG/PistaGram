@@ -176,7 +176,7 @@ export const getPendingReqUsers = async (req, res) => {
         });
 
         LOGGER.info(
-            `Get All Pending Request Users controller - Sent all pending requst users back to User - { _id - ${loggedInUserId} }`
+            `Get All Pending Request Users controller - Sent all pending requst users back to User - { _id - ${userId} }`
         );
 
         res.status(200).json(incomingRequestResult);

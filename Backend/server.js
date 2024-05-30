@@ -10,7 +10,6 @@ import { app, server } from "./socket.js";
 import userRouter from "./Routers/User.js";
 import requestRouter from "./Routers/Request.js";
 import friendsRouter from "./Routers/Friends.js";
-import { lokiLogger } from "./Utils/lokiLogger.js";
 import messagingRouter from "./Routers/Message.js";
 import authenticationRouter from "./Routers/Authentication.js";
 import connectMongoDB from "./Database-Drivers/connectMonogoDB.js";
@@ -24,7 +23,13 @@ const options = {
     },
     transports: [
         new LokiTransport({
-            host: "192.168.0.106:3100",
+            host: "http://192.168.0.109:3100",
+            labels: { app: "pistagram" },
+            onConnectionError: (err) => {
+                console.log(
+                    `Connection to loki logger broke due to ${error.name} because of ${error.message}`
+                );
+            },
         }),
     ],
 };
@@ -39,6 +44,11 @@ collectDefaultMetrics({ register: client.register });
 const totalRequestCounter = new client.Counter({
     name: "total_requests",
     help: "Counts total requests landed on the server",
+});
+
+const totalSuccessfullResponseCounter = new client.Counter({
+    name: "successfull_response",
+    help: "Counts total successfull response given by the server",
 });
 
 const requestResponseTime = new client.Histogram({
@@ -62,28 +72,29 @@ app.use(
                 status_code: res.statusCode,
             })
             .observe(time);
+        totalSuccessfullResponseCounter.inc();
     })
 );
 
 app.use(express.static(path.join(__dirname, "Frontend", "dist")));
 
 // Route Handlers
-app.get("/", lokiLogger("/"), (req, res) => {
+app.get("/", (req, res) => {
     res.send("Server is runnning");
 });
 
-app.get("/metrics", lokiLogger("/metrics"), async (req, res) => {
+app.get("/metrics", async (req, res) => {
     res.setHeader("Content-Type", client.register.contentType);
 
     const metrics = await client.register.metrics();
     res.send(metrics);
 });
 
-app.use("/api/auth", lokiLogger("/api/auth"), authenticationRouter);
-app.use("/api/users", lokiLogger("/api/users"), userRouter);
-app.use("/api/messages", lokiLogger("/api/messages"), messagingRouter);
-app.use("/api/request", lokiLogger("/api/request"), requestRouter);
-app.use("/api/friends", lokiLogger("/api/friends"), friendsRouter);
+app.use("/api/auth", authenticationRouter);
+app.use("/api/users", userRouter);
+app.use("/api/messages", messagingRouter);
+app.use("/api/request", requestRouter);
+app.use("/api/friends", friendsRouter);
 
 app.get("*", (req, res) => {
     LOGGER.info("Request came to get frontend build files");
