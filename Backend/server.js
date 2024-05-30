@@ -23,17 +23,13 @@ const options = {
     },
     transports: [
         new LokiTransport({
-<<<<<<< HEAD
-            host: "http://192.168.0.109:3100",
+            host:  `http://${process.env.LOKI_HOST}:3100`,
             labels: { app: "pistagram" },
             onConnectionError: (err) => {
                 console.log(
                     `Connection to loki logger broke due to ${error.name} because of ${error.message}`
                 );
             },
-=======
-            host:  `http://${process.env.LOKI_HOST}:3100`,
->>>>>>> 7c95407 (Creating env variable for LOKI HOST)
         }),
     ],
 };
